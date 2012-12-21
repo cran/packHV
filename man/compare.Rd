@@ -1,0 +1,36 @@
+\name{compare}
+\alias{compare}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{Comparing two databases assumed to be identical}
+\description{Compares two data frames assumed to be identical, prints the differences in the console and also returns the results in a data frame}
+\usage{
+compare(d1, d2, id, file.export = NULL)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{d1}{first data frame}
+  \item{d2}{second data frame}
+  \item{id}{character string, primary key of the two data bases}
+  \item{file.export}{character string, name of the XLS file exported}
+}
+
+\value{A data frame containing the differences between the two data bases}
+
+\author{Hugo Varet}
+
+\examples{
+N=100
+data1=data.frame(id=1:N,a=rnorm(N),
+                        b=factor(sample(LETTERS[1:5],N,TRUE)),
+                        c=as.character(sample(LETTERS[1:5],N,TRUE)),
+                        d=as.Date(32768:(32768+N-1),origin="1900-01-01"))
+data1$c=as.character(data1$c)
+data2=data1
+data2$id[3]=4654
+data2$a[30]=NA
+data2$a[31]=45
+data2$b=as.character(data2$b)
+data2$d=as.character(data2$d)
+data2$e=rnorm(N)
+compare(data1,data2,"id")
+}

@@ -11,7 +11,7 @@ A few usefull functions
 Package: \tab packHV\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2012-12-21\cr
+Date: \tab 2013-01-18\cr
 License: \tab GPL (>=2) \cr
 }
 }

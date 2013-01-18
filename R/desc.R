@@ -1,5 +1,5 @@
 desc <-
-function(data,vars,group=NULL,vars.labels=vars,type.quanti="med",test=TRUE,
+function(data,vars,group=NULL,vars.labels=vars,group.labels=NULL,type.quanti="med",test=TRUE,
               noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,language="english"){
   # data: the data frame in which we can find
   #   vars: c("var1",..,"varN")
@@ -89,11 +89,17 @@ function(data,vars,group=NULL,vars.labels=vars,type.quanti="med",test=TRUE,
   cat(paste("N (%)",khi2_fisher," for categorical variables\n",sep=""))
   ncol=2+nb.group+1*test
   out=matrix("",nrow=2,ncol=ncol)
+  if (is.null(group.labels)){
+    colnames=paste(groupname,levgp,sep=sep)
+  } else{
+    if (length(group.labels)!=length(levgp)){stop("the argument 'group.levels' does not fit the argument 'group'")}
+    colnames=group.labels
+  }
   if (test){
-    out[1,]=c(parameter,"",paste(groupname,levgp,sep=sep),pvalue)
+    out[1,]=c(parameter,"",colnames,pvalue)
     out[2,]=c("","",paste("(N=",table(group),")",sep=""),"")       
   } else{
-    out[1,]=c(parameter,"",paste(groupname,levgp,sep=sep))
+    out[1,]=c(parameter,"",colnames)
     out[2,]=c("","",paste("(N=",table(group),")",sep=""))       
   }    
   types=NULL; for (i in 1:length(vars)){types=c(types,class(data[,vars[i]]))}   # deleting covariates != numeric, character or factor
@@ -214,7 +220,7 @@ function(data,vars,group=NULL,vars.labels=vars,type.quanti="med",test=TRUE,
   if (export){
 #    write.xlsx2(data.frame(out),file.export,col.names=F,row.names=F)           # package xlsx
 #    writeWorksheetToFile(file.export,data.frame(out),"descHV.export",header=F,rownames=NULL)  # package XLConnect
-#    out.df=as.data.frame(out)
+    out.df=as.data.frame(out)
     WriteXLS("out.df",file.export,"Descriptive statitics",Encoding="latin1",AdjWidth=TRUE,col.names=FALSE)
 #    write.table(out,file=file.export,row.names=F,col.names=F,quote=F,sep="\t")
     cat("Export created: ",file.export,"\n",sep="")

@@ -6,7 +6,7 @@
 \usage{
 desc(data, vars, group = NULL, vars.labels = vars, group.labels = NULL, 
      type.quanti = "med", test = TRUE, noquote = TRUE, justify = TRUE, 
-	 digits = 2, file.export = NULL, language = "english")
+     digits = 2, file.export = NULL, language = "english")
 }
 \arguments{
   \item{data}{data frame to describe in which we can find \code{vars} and \code{group}}

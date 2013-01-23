@@ -11,11 +11,11 @@
   \item{vars}{vector of character string of covariates}
 }
 
-\value{None}
+\value{The modified data frame}
 
 \author{Hugo Varet}
 
 \examples{
-data=data.frame(x=rbinom(20,1,0.5),y=rbinom(20,1,0.5),z=rbinom(20,1,0.5))
-convert_factor(data,c("x","y"))
+my.data=data=data.frame(x=rbinom(20,1,0.5),y=rbinom(20,1,0.5),z=rbinom(20,1,0.5))
+my.data=convert_factor(my.data,c("x","y"))
 }

@@ -10,8 +10,8 @@ A few usefull functions
 \tabular{ll}{
 Package: \tab packHV\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2013-01-18\cr
+Version: \tab 1.2\cr
+Date: \tab 2013-01-23\cr
 License: \tab GPL (>=2) \cr
 }
 }

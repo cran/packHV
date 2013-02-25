@@ -1,11 +1,12 @@
 desc <-
-function(data,vars,group=NULL,vars.labels=vars,group.labels=NULL,type.quanti="med",test=TRUE,
-              noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,language="english"){
+function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="med",
+              test=TRUE,noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,language="english"){
   # data: the data frame in which we can find
   #   vars: c("var1",..,"varN")
   #   group: NULL to describe the whole population
   #          or "group" to describe each level of group and to test the impact
   #          of "group" on each variable in vars
+  # whole: boolean, TRUE to add a column with the whole statistics when comparing groups (set to FALSE if group=NULL)
   # type.quanti: "mean" returns mean (sd) and "med" returns med [Q1,Q3] for quantitative covariates (mean_mm or med_mm to add (min;max))
   # test: boolean, if TRUE tests will be performed:
   #   chisq/fisher exact test for qualitative covariates (depending on whether any cell number is <5),
@@ -16,42 +17,41 @@ function(data,vars,group=NULL,vars.labels=vars,group.labels=NULL,type.quanti="me
   # digits: number of digits of the statistics (mean, sd, median, min, max, Q1, Q3, %), p-values have always 3 digits
   # file.export: character string of the path where to export the returning table
   # language: character string "english" or "french" which can change the name of the columns (moreover, french will replace "." by ",")
-  export=!is.null(file.export)
-  if (export){justify=FALSE}
-  name_data=deparse(match.call()[[2]])
-  if (!is.data.frame(data)){
-    stop(paste(name_data," is not a data frame",sep=""))
-  }
-  if (!I(language %in% c("english","french"))){
-    stop("language must be equal to \"english\" or \"french\"")
+
+  name_data=deparse(substitute(data))
+  
+  ############################### checkings ####################################
+  if (!is.null(file.export)){justify=FALSE}
+  if (!is.data.frame(data)){stop(paste(name_data," is not a data frame",sep=""))}
+  if (language=="french"){
+    whole_pop="Echantillon entier"; pvalue="p-valeur"; parameter="Variable";
   } else{
-    if (language=="english"){
-      whole_pop="Whole sample"; pvalue="p-value"; parameter="Covariate";
-    } else{
-      whole_pop="Echantillon entier"; pvalue="p-valeur"; parameter="Variable";
-    }
+    whole_pop="Whole sample"; pvalue="p-value"; parameter="Covariate";
   }
   if (is.null(group)){
-    test=FALSE; groupname=""; group=factor(rep(whole_pop,nrow(data))); sep="";
+    test=FALSE; whole=FALSE; groupname=""; sep=""; data.g=data;
+    group=factor(rep(whole_pop,nrow(data))); group.g=factor(rep(whole_pop,nrow(data)));
   } else{
-    if (!I(group %in% names(data))){
-      stop(paste("The variable of interest ",group," is not in ",name_data,sep=""))
-    }
+    if (!I(group %in% names(data))){stop(paste("The variable of interest ",group," is not in ",name_data,sep=""))}
     groupname=group
     if (any(is.na(data[,groupname]))){cat(paste(sum(is.na(data[,groupname]))," missing values in ",groupname,"\n",sep=""))}  
-    sep=" "; data=data[!is.na(data[,groupname]),]; group=factor(data[,groupname]);
+    sep=" "; data.g=data[!is.na(data[,groupname]),]; 
+    group=factor(data[,groupname]); group.g=factor(data.g[,groupname]);
   }
-  if (length(vars)!=length(vars.labels)){
-    stop("vars and vars.labels do not have the same length")
-  }
-  levgp=levels(group)
-  nb.group=length(levgp)
-  vars=unique(vars)
+  if (length(vars)!=length(vars.labels)){stop("vars and vars.labels do not have the same length")}
   if (any(!I(vars %in% names(data)))){
     cat(paste("Variable(s) ",paste(vars[!I(vars %in% names(data))],collapse=", ")," not in ",name_data,"\n",sep=""))
     vars.labels=vars.labels[vars %in% names(data)]
     vars=vars[vars %in% names(data)]
   }
+  fun_type=function(var){class(var)}                                            # deleting covariates != numeric, character, logical or factor
+  delete=vars[!I(apply(data[,vars],2,fun_type) %in% c("integer","numeric","factor","character","logical"))]
+  if (length(delete)>0){
+    cat(paste("Variable(s) ",paste(delete,collapse=", ")," not numeric, neither factor, neither character, neither logical\n",sep=""))
+  }
+  vars.labels=vars.labels[!I(vars %in% delete)]; vars=vars[!I(vars %in% delete)];
+    
+  ########################## functions fun.quanti ##############################
   if (!I(type.quanti %in% c("mean","med","mean_mm","med_mm"))){
     stop("type.quanti must be equal to \"mean\", \"med\", \"mean_mm\" or \"med_mm\"")
   } else{
@@ -87,123 +87,132 @@ function(data,vars,group=NULL,vars.labels=vars,group.labels=NULL,type.quanti="me
     }
   }
   cat(paste("N (%)",khi2_fisher," for categorical variables\n",sep=""))
-  ncol=2+nb.group+1*test
+  
+  ####################### setting the output matrix ############################
+  levgp=levels(group); nb.group=length(levgp);
+  ncol=2+nb.group+1*whole+1*test
   out=matrix("",nrow=2,ncol=ncol)
-  if (is.null(group.labels)){
-    colnames=paste(groupname,levgp,sep=sep)
-  } else{
-    if (length(group.labels)!=length(levgp)){stop("the argument 'group.levels' does not fit the argument 'group'")}
-    colnames=group.labels
-  }
-  if (test){
-    out[1,]=c(parameter,"",colnames,pvalue)
-    out[2,]=c("","",paste("(N=",table(group),")",sep=""),"")       
-  } else{
-    out[1,]=c(parameter,"",colnames)
-    out[2,]=c("","",paste("(N=",table(group),")",sep=""))       
-  }    
-  types=NULL; for (i in 1:length(vars)){types=c(types,class(data[,vars[i]]))}   # deleting covariates != numeric, character or factor
-  delete=vars[!I(types %in% c("integer","numeric","factor","character"))]
-  if (length(delete)>0){cat(paste("Variable(s) ",paste(delete,collapse=", ")," not numeric, neither factor, neither character\n",sep=""))}
-  vars.labels=vars.labels[!I(vars %in% delete)]
-  vars=vars[!I(vars %in% delete)]
-  for (i in 1:length(vars)){                                                    # loop for each covariate
+  if (is.null(group.labels)){colnames=paste(groupname,levgp,sep=sep)} else{colnames=group.labels}
+  out[1,]=c(parameter,"",if(whole){whole_pop}else{NULL},colnames,if(test){pvalue}else{NULL})
+  out[2,]=c("","",if(whole){paste("(N=",nrow(data),")",sep="")}else{NULL},paste("(N=",table(group.g),")",sep=""),if(test){""}else{NULL})    
+
+  ######################## loop for each covariate #############################
+  for (i in 1:length(vars)){                   
     name_var=vars.labels[i]
     var=data[,vars[i]]
-    nb.na=sum(is.na(var))
+    
     if (is.numeric(var)){                                                       # for each numeric variable
+      var.g=data.g[,vars[i]]
       res=NULL
-      for (lev_i in levgp){
-        res=c(res,fun.quanti(var[group==lev_i]))
-      }
+      for (lev_i in levgp){res=c(res,fun.quanti(var.g[group.g==lev_i]))}
+      if (whole){res=c(fun.quanti(var),res)}
       p.value=NULL
       if (test){
+        p.value=NA
         if (type.quanti %in% c("mean","mean_mm")){
           if (nb.group>2){
-            p.value=anova(lm(var~group))[1,5]
-            if (is.na(p.value)){cat(paste("Problem of test with covariate",vars[i],"\n"))}
+            p.value=tryCatch(anova(lm(var.g~group.g))[1,5],
+                     error=function(e){cat(paste("Error: problem of ANOVA with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of test with covariate",vars[i],"\n"));
+                                         p=anova(lm(var.g~group.g))[1,5];
+                                         options(warn=0);
+                                         return(p)})
           } else{
-            p.value=NA
-            tryCatch(p.value<-t.test(var~group)$p.value,
-                     error=function(e){cat(paste("Error: problem of test with covariate",vars[i],"\n"))},
-                     warning=function(w){cat(paste("Warning: problem of test with covariate",vars[i],"\n"))})
+            p.value=tryCatch(t.test(var.g~group.g)$p.value,
+                     error=function(e){cat(paste("Error: problem of t-test with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of test with covariate",vars[i],"\n"));
+                                         p=t.test(var.g~group.g)$p.value;
+                                         options(warn=0);
+                                         return(p)})
           }
         }
         if (type.quanti %in% c("med","med_mm")){
           if (nb.group>2){
-            p.value=NA
-            tryCatch(p.value<-kruskal.test(var~group)$p.value,
-                     error=function(e){cat(paste("Error: problem of test with covariate",vars[i],"\n"))},
-                     warning=function(w){cat(paste("Warning: problem of test with covariate",vars[i],"\n"))})
+            p.value=tryCatch(kruskal.test(var.g~group.g)$p.value,
+                     error=function(e){cat(paste("Error: problem of Kruskal-Wallis test with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of test with covariate",vars[i],"\n"));
+                                         p=kruskal.test(var.g~group.g)$p.value;
+                                         options(warn=0);
+                                         return(p)})
           } else{
-            p.value=NA
-            tryCatch(p.value<-wilcox.test(var~group)$p.value,
-                     error=function(e){cat(paste("Error: problem of test with covariate",vars[i],"\n"))},
-                     warning=function(w){cat(paste("Warning: problem of test with covariate",vars[i],"\n"))})
+            p.value=tryCatch(wilcox.test(var.g~group.g)$p.value,
+                     error=function(e){cat(paste("Error: problem of Wilcoxon test with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of test with covariate",vars[i],"\n"));
+                                         p=wilcox.test(var.g~group.g)$p.value;
+                                         options(warn=0);
+                                         return(p)})
           }
         }
       }
       if (!is.null(p.value)){p.value=round(p.value,3)}
-#      if (any(is.na(var))){
-#        name_var=paste(name_var," (",sum(is.na(var))," NA)",sep="")
-#      }
       out=rbind(out,c(name_var,"",res,p.value))
-      if (any(is.na(var))){
-        out.na=table(is.na(var),group)
-#        out.na=paste(out.na[2,]," (",round(100*out.na[2,]/colSums(out.na),2),"%)",sep="")
-        out.na=out.na[2,]
-        if (!is.null(p.value)){
-          out=rbind(out,c("","NA",out.na,""))
-        } else{
-          out=rbind(out,c("","NA",out.na))
-        }
+      # getting the number of NA if any
+      if (I(any(is.na(var)) & whole) | any(is.na(var.g))){
+        out.na=NULL
+        for (lev_i in levgp){out.na=c(out.na,sum(is.na(var.g[group.g==lev_i])))}
+        if (whole){out.na=c(sum(is.na(var)),out.na)}
+        out=rbind(out,c("","NA",out.na,if(test){""}else{NULL}))
       }
-    } else{                                                                     # for each factor variable
-      var=factor(var)                                                           # transforming character and factor in factor
-      tab=table(var,group)
-      tab.p=round(100*prop.table(tab,margin=2),digits) # tab/matrix(apply(tab,2,sum),nrow=nrow(tab),ncol=nb.group,byrow=T)
+    
+    } else{                                                                     # for each factor/character/logical variable
+      var=factor(var); var.g=var[!is.na(group)];                                # transforming character and factor in factor 
+      tab=table(var.g,group.g)
+      tab.p=round(100*prop.table(tab,margin=2),digits)
+      if (whole){
+        tab=cbind(table(var),tab)
+        tab.p=cbind(round(100*prop.table(table(var)),digits),tab.p)
+      }
+      tab.p=ifelse(is.nan(tab.p),0,tab.p)
+      p.value=NULL
       if (test){
-        if (nrow(tab)<=1){
-          p.value=NA
-        } else{
+        p.value=NA
+        if (nrow(tab)>1){
           if (any(tab<5)){
-            p.value=NA
-            tryCatch(p.value<-fisher.test(tab)$p.value,
-                     error=function(e){cat(paste("Error: problem of test with covariate",vars[i],"\n"))},
-                     warning=function(w){cat(paste("Warning: problem of test with covariate",vars[i],"\n"))})
+            p.value=tryCatch(fisher.test(tab)$p.value,
+                     error=function(e){cat(paste("Error: problem of Fisher test with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of Fisher test with covariate",vars[i],"\n"));
+                                         p=fisher.test(tab)$p.value;
+                                         options(warn=0);
+                                         return(p)})
           } else{
-            p.value=NA
-            tryCatch(p.value<-chisq.test(tab)$p.value,
-                     error=function(e){cat(paste("Error: problem of test with covariate",vars[i],"\n"))},
-                     warning=function(w){cat(paste("Warning: problem of test with covariate",vars[i],"\n"))})
+            p.value=tryCatch(chisq.test(tab)$p.value,
+                     error=function(e){cat(paste("Error: problem of khi-2 test with covariate",vars[i],"\n"));return(NA);},
+                     warning=function(w){options(warn=-1);
+                                         cat(paste("Warning: problem of khi-2 test with covariate",vars[i],"\n"));
+                                         p=chisq.test(tab)$p.value;
+                                         options(warn=0);
+                                         return(p)})
           }
         }
       }
-      if (all(is.na(var))){
-        res.out=matrix("",nrow=1,ncol=ncol)
-        res.out[1,1:2]=c(name_var,"NA")
-        if (test){
-          res.out[1,ncol]=round(p.value,3)
-        }  
-        res.out[1,3:(2+nb.group)]=table(group)      
-      } else{
+      if (nrow(tab)>0){
         res=matrix(paste(tab," (",tab.p,"%)",sep=""),ncol=ncol(tab))
-        res.out=matrix("",nrow=nrow(res)+1*I(any(is.na(var))),ncol=ncol)
-        res.out[1,1]=name_var
-        if (test){
-          res.out[1,ncol]=round(p.value,3)
-        }
-        res.out[1:nrow(res),3:(2+nb.group)]=res
-        if (any(is.na(var))){
-          res.out[1:nrow(res.out),2]=c(levels(var),"NA")
-          res.out[nrow(res.out),3:(2+nb.group)]=table(is.na(var),group)[2,]
-        } else{
-          res.out[1:nrow(res.out),2]=levels(var)
-        }
+      } else{
+        res=matrix(nrow=0,ncol=ncol(tab))
       }
+      res.out=matrix("",nrow=nrow(res)+1*I(I(any(is.na(var)) & whole) | any(is.na(var.g))),ncol=ncol)
+      res.out[1,1]=name_var
+      if (!is.null(p.value)){res.out[1,ncol]=round(p.value,3)}
+      if (nrow(tab)>0){
+        res.out[1:nrow(res),3:(2+nb.group+1*whole)]=res
+      }
+      res.out[1:nrow(res.out),2]=c(levels(var),if(I(I(any(is.na(var)) & whole) | any(is.na(var.g)))){"NA"}else{NULL})
+      if (I(any(is.na(var)) & whole) | any(is.na(var.g))){
+        res.na=NULL
+        for (lev_i in levgp){res.na=c(res.na,sum(is.na(var.g[group.g==lev_i])))}
+        if (whole){res.na=c(sum(is.na(var)),res.na)}
+        res.out[nrow(res.out),3:(2+nb.group+1*whole)]=res.na
+      }      
       out=rbind(out,res.out)
     }
   }
+  
+  ############################# last checkings #################################
   if (test){
     out[,ncol(out)]=ifelse(out[,ncol(out)]==0,"<0.001",out[,ncol(out)])
     out[,ncol(out)]=ifelse(is.na(out[,ncol(out)]),"---",out[,ncol(out)])
@@ -213,17 +222,17 @@ function(data,vars,group=NULL,vars.labels=vars,group.labels=NULL,type.quanti="me
   if (justify){
     out[,1]=format(out[,1],justify="right")
     out[,2]=format(out[,2],justify="left")
-    out[,-c(1:2,ncol(out))]=format(out[,-c(1:2,ncol(out))],justify="right")
-    out[,ncol(out)]=format(out[,ncol(out)],justify="right")  
+    out[,-c(1:2,if(test){ncol(out)}else{NULL})]=format(out[,-c(1:2,if(test){ncol(out)}else{NULL})],justify="right")
+    if (test){out[,ncol(out)]=format(out[,ncol(out)],justify="left")    }
   }  
   if (all(out[,2]==rep("",nrow(out)))){out=out[,-2]}
-  if (export){
-#    write.xlsx2(data.frame(out),file.export,col.names=F,row.names=F)           # package xlsx
-#    writeWorksheetToFile(file.export,data.frame(out),"descHV.export",header=F,rownames=NULL)  # package XLConnect
+  
+  ################################# export #####################################  
+  if (!is.null(file.export)){
     out.df=as.data.frame(out)
     WriteXLS("out.df",file.export,"Descriptive statitics",Encoding="latin1",AdjWidth=TRUE,col.names=FALSE)
-#    write.table(out,file=file.export,row.names=F,col.names=F,quote=F,sep="\t")
     cat("Export created: ",file.export,"\n",sep="")
+    if (noquote){out=noquote(out)}
     return(invisible(out))
   } else{
     if (noquote){out=noquote(out)}

@@ -4,9 +4,9 @@ function(d1,d2,id,file.export=NULL){
   # d2: second data frame
   # id: character string of the primary key of d1 and d2
   call=match.call()
-  name_d1=deparse(call[[2]])
-  name_d2=deparse(call[[3]])
-  
+  name_d1=deparse(substitute(d1))
+  name_d2=deparse(substitute(d2))
+    
   if (!any(names(d1)==id) | !any(names(d2)==id)){stop(paste("The primary key ",id," is not in the two databases\n",sep=""))}
   if (length(d1[,id])!=length(unique(d1[,id]))){
     if (length(d2[,id])!=length(unique(d2[,id]))){
@@ -75,7 +75,6 @@ function(d1,d2,id,file.export=NULL){
   cat("\n")
   if (!is.null(file.export)){
     WriteXLS("out_table",file.export,"data bases comparison",Encoding="latin1",AdjWidth=TRUE)
-#    write.table(out_table,file=file.export,row.names=F,col.names=F,sep=";",quote=F)
     cat("Export created: ",file.export,"\n",sep="")  
   }
   if (out_same){

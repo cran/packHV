@@ -1,14 +1,12 @@
 plot_km <-
 function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
                  left=4.5,bottom=5,cex.mtext=1,...){
-  # formula : Surv(temps,cens)~groupe, ces variables étant dans data
-  # times.print : temps auxquels les n at risk s'affichent
-  # left : nb de lignes dans la marge de gauche (controle donc la largeur)
-  # bottom : nb de lignes en plus de celles du tableau dans la marge du bas (utile pour juxtaposer pls graph)
-  # attention : dans formula, il ne faut que des noms de variables, i.e. pas de cut(x,...)
-  require(survival)
-  call <- match.call()
-  formula <- deparse(call[[2]])
+  # formula: Surv(temps,cens)~groupe, ces variables étant dans data
+  # times.print: temps auxquels les n at risk s'affichent
+  # left: nb de lignes dans la marge de gauche (controle donc la largeur)
+  # bottom: nb de lignes en plus de celles du tableau dans la marge du bas (utile pour juxtaposer pls graph)
+  # attention: dans formula, il ne faut que des noms de variables, i.e. pas de cut(x,...)
+  formula <- deparse(substitute(formula))
 
   # extracting the variable names from formula
   formula <- paste(formula, collapse=" ")
@@ -18,7 +16,7 @@ function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
   varnames <- gsub("[[:space:]]+", "", unlist(varnames))
 
   if (any(!I(varnames %in% names(data)))){
-    stop(paste(paste(varnames,collapse=" and/or ")," not in ",deparse(call[[3]]),"\n",sep=""))
+    stop(paste(paste(varnames,collapse=" and/or ")," not in ",deparse(substitute(data)),"\n",sep=""))
   }
   
   if (is.null(xlab)){xlab=varnames[1]}

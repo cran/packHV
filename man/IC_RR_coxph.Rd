@@ -14,8 +14,7 @@
 \author{Hugo Varet}
 
 \examples{
-N=100
-my.data=data.frame(time=rexp(N),cens=rbinom(N,1,0.7),x1=rnorm(N),x2=rnorm(N))
-IC_RR_coxph(coxph(Surv(time,cens)~x1+x2,data=my.data),alpha=0.05,sided=1)
+cgd$time=cgd$tstop-cgd$tstart
+IC_RR_coxph(coxph(Surv(time,status)~sex+age,data=cgd),alpha=0.05,sided=1)
 }
 

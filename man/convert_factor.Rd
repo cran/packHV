@@ -16,6 +16,7 @@
 \author{Hugo Varet}
 
 \examples{
-my.data=data=data.frame(x=rbinom(20,1,0.5),y=rbinom(20,1,0.5),z=rbinom(20,1,0.5))
-my.data=convert_factor(my.data,c("x","y"))
+cgd$steroids
+cgd$status
+cgd=convert_factor(cgd,c("steroids","status"))
 }

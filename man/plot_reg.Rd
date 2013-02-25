@@ -19,9 +19,5 @@ plot_reg(x, y, pch = 19, xlab = NULL, ylab = NULL, ...)
 \author{Hugo Varet}
 
 \examples{
-N=100
-x=rnorm(N)
-y=2*x+1+rnorm(N,0,0.2)
-my.data=data.frame(x,y)
-plot_reg(my.data$x,my.data$y)
+plot_reg(cgd$age,cgd$height,xlab="Age (years)",ylab="Height")
 }

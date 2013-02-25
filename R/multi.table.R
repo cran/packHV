@@ -1,8 +1,7 @@
 multi.table <-
 function(data,vars){
-  call=match.call()
   if (any(!I(vars %in% names(data)))){
-    stop(paste(paste(vars[!I(vars %in% names(data))],collapse=", ")," not in ",deparse(call[[2]]),"\n",sep=""))
+    stop(paste("Variable(s) ",paste(vars[!I(vars %in% names(data))],collapse=", ")," not in ",deparse(substitute(data)),"\n",sep=""))
   }
 
   names=NULL

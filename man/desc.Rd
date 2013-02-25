@@ -4,14 +4,15 @@
 \description{Makes descriptive statistics of a data frame according to a group covariate or not, can export the results}
 
 \usage{
-desc(data, vars, group = NULL, vars.labels = vars, group.labels = NULL, 
-     type.quanti = "med", test = TRUE, noquote = TRUE, justify = TRUE, 
-     digits = 2, file.export = NULL, language = "english")
+desc(data, vars, group = NULL, whole = TRUE, vars.labels = vars,
+     group.labels = NULL, type.quanti = "med", test = TRUE, noquote = TRUE,
+     justify = TRUE, digits = 2, file.export = NULL, language = "english")
 }
 \arguments{
   \item{data}{data frame to describe in which we can find \code{vars} and \code{group}}
   \item{vars}{vector of character strings of the covariates to describe}
   \item{group}{character string, statistics created for each levels of this covariate}
+  \item{whole}{boolean, \code{TRUE} to add a column with the whole statistics when comparing groups (set to \code{FALSE} if \code{group=NULL})}
   \item{vars.labels}{vector of character string for sweeter names of covariates in the output}
   \item{group.labels}{vector of character string for sweeter column names}  
   \item{type.quanti}{character string, \code{"med"} to compute median [Q1;Q3], \code{"mean"} to compute mean (sd) or \code{"med_mm"} or \code{"mean_mm"} to add (min;max)}
@@ -28,12 +29,7 @@ desc(data, vars, group = NULL, vars.labels = vars, group.labels = NULL,
 \author{Hugo Varet}
 
 \examples{
-N=1000
-my.data=data.frame(a=rnorm(N),b=factor(rbinom(N,1,0.5)),c=factor(sample(LETTERS[1:3],N,TRUE)),
-                   group=factor(sample(c("gr1","gr2"),N,TRUE)))
-my.data$a[c(3,64,465)]=NA
-my.data$b[c(34,634,65)]=NA
-my.data$a[c(23,624,495)]=NA
-my.data$group[c(934,83,46)]=NA
-desc(my.data,c("a","b","c"),"group")
+cgd$steroids=factor(cgd$steroids)
+cgd$status=factor(cgd$status)
+desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
 }

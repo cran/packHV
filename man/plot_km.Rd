@@ -25,7 +25,6 @@ plot_km(formula, data, test = TRUE, times.print = NULL, xlab = NULL, ylab = NULL
 \author{Hugo Varet}
 
 \examples{
-N=100
-my.data=data.frame(time=rexp(N),cens=rbinom(N,1,0.7),group=factor(rbinom(N,1,0.5)))
-plot_km(Surv(time,cens)~group,data=my.data)
+cgd$time=cgd$tstop-cgd$tstart
+plot_km(Surv(time,status)~sex,data=cgd,lwd=2,col=c("blue","red"))
 }

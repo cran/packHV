@@ -1,7 +1,6 @@
 hist_boxplot <-
-function(x,freq=TRUE,density=FALSE,xlab=NULL,...){
-  call <- match.call()  
-  abs <- deparse(call[[2]])
+function(x,freq=TRUE,density=FALSE,main=NULL,xlab=NULL,...){
+  abs <- deparse(substitute(x))
   if (is.null(xlab)){xlab=abs}
   ted <- hist(x,plot=FALSE)
   par(yaxs="i")
@@ -17,7 +16,8 @@ function(x,freq=TRUE,density=FALSE,xlab=NULL,...){
     ylim=c(-max/5,max)
     boxwex=max/6    
   }
-  hist(x,ylim=ylim,yaxt="n",xlab=xlab,freq=freq,...)
+  if (is.null(main)){main=paste("Histogram of",abs)}
+  hist(x,ylim=ylim,yaxt="n",xlab=xlab,freq=freq,main=main,...)
   axis(2,at=seq(0,ylim[2],length=5))
   usrs <- par()$usr
   par(new=TRUE,bty="n",xaxs="i",yaxs="i",ann=FALSE)

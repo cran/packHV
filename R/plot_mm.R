@@ -6,9 +6,8 @@ function(formula,data,col.spag=1,col.mean=1,type="spaghettis",at.x=NULL,at.y=NUL
   # col.spag: vector of length nrow(data) with colors (one for each individual)
   # col.mean: vector of length length(levels(group)) with colors (one for each group)
   # type: "spaghettis", "mean" or "both"
-  call=match.call()
-  formumla=deparse(call[[2]])
-  name_data=deparse(call[[3]])
+  formumla=deparse(formula)
+  name_data=deparse(data)
   formula <- paste(formula, collapse=" ")
   formula <- gsub("[[:space:]]+", " ", formula)
   varnames <- gsub("\\||\\+|~[[:space:]]|\\(|\\)| \\?\\(.*\\)", "", formula)

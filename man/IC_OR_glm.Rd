@@ -15,8 +15,5 @@ IC_OR_glm(model, alpha = 0.05)
 \author{Hugo Varet}
 
 \examples{
-y=rbinom(1000,1,0.4)
-x1=runif(1000)
-x2=runif(1000)
-IC_OR_glm(glm(y~x1+x2,family="binomial"))
+IC_OR_glm(glm(inherit~sex+age,data=cgd,family="binomial"))
 }

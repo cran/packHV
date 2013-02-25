@@ -18,9 +18,5 @@ plot_multi.table(data, vars)
 \seealso{\code{\link{multi.table}}}
 
 \examples{
-N=100
-my.data=data.frame(x=factor(sample(0:2,N,TRUE)),
-                   y=factor(sample(0:4,N,TRUE)),
-                   z=factor(sample(0:3,N,TRUE)))
-plot_multi.table(my.data,c("x","y","z"))
+plot_multi.table(cgd,c("treat","sex","inherit"))
 }

@@ -2,9 +2,8 @@ plot_reg <-
 function(x,y,pch=19,xlab=NULL,ylab=NULL,...){
   # x and y are the two variables (missing values are not supported)
   # ... are arguments to be passed in plot() 
-  call <- match.call()
-  abs <- deparse(call[[2]])
-  ord <- deparse(call[[3]])
+  abs <- deparse(substitute(x))
+  ord <- deparse(substitute(y))
   
 #  eval(parse(text=paste(abs,"=x",sep="")))
 #  eval(parse(text=paste(ord,"=y",sep="")))  

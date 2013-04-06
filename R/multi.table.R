@@ -3,6 +3,7 @@ function(data,vars){
   if (any(!I(vars %in% names(data)))){
     stop(paste("Variable(s) ",paste(vars[!I(vars %in% names(data))],collapse=", ")," not in ",deparse(substitute(data)),"\n",sep=""))
   }
+  vars=unique(vars)
 
   names=NULL
   levels=NULL
@@ -15,6 +16,8 @@ function(data,vars){
   if (length(vars.pb)>0){
     stop(paste(paste(vars.pb,collapse=", ")," not factor neither character",sep=""))
   }
+  
+  data=convert_factor(data,vars)
   for (var in vars){names=c(names,var,rep("",nlevels(data[,var])))}
   for (var in vars){levels=c(levels,"",levels(data[,var]))}
   names=names[-length(names)]
@@ -36,5 +39,9 @@ function(data,vars){
   res3[-c(1:2),-c(1:2)]=res2[-1,-1]
   res3[1,]=res3[,1]=c("",res2[1,])
   
+  if (length(vars)==2){
+    res3=res3[1:(nlevels(data[,vars[1]])+2), c(1:2,c(1:nlevels(data[,vars[2]]))+nlevels(data[,vars[1]])+3)]
+  }
+
   return(noquote(res3))
 }

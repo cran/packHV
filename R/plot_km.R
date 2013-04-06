@@ -1,6 +1,6 @@
 plot_km <-
-function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
-                 left=4.5,bottom=5,cex.mtext=1,...){
+function(formula,data,test=TRUE,conf.int=FALSE,times.print=NULL,xlab=NULL,ylab=NULL,
+                 left=4.5,bottom=5,cex.mtext=1,lwd=2,col=NULL,...){
   # formula: Surv(temps,cens)~groupe, ces variables étant dans data
   # times.print: temps auxquels les n at risk s'affichent
   # left: nb de lignes dans la marge de gauche (controle donc la largeur)
@@ -15,18 +15,12 @@ function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
   varnames <- strsplit(varnames,  "[[:space:]]*(\\+|,|~)[[:space:]]*")
   varnames <- gsub("[[:space:]]+", "", unlist(varnames))
 
-  if (any(!I(varnames %in% names(data)))){
+  if (any(!I(setdiff(varnames,"1") %in% names(data)))){
     stop(paste(paste(varnames,collapse=" and/or ")," not in ",deparse(substitute(data)),"\n",sep=""))
   }
   
-  if (is.null(xlab)){xlab=varnames[1]}
-  if (is.null(ylab)){ylab="Survival"}
-  
   temps=data[,varnames[1]]
   cens=data[,varnames[2]]
-  if (length(levels(factor(data[,varnames[3]])))==1){
-    stop(paste(varnames[3]," has only one level\n",sep=""))
-  }
   
   if (varnames[3]=="1"){
     groupe=factor(rep("# at risk",nrow(data)))
@@ -34,13 +28,21 @@ function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
     test=F
   } else{
     groupe=factor(data[,varnames[3]])
+    if (length(levels(factor(data[,varnames[3]])))==1){
+      stop(paste(varnames[3]," has only one level\n",sep=""))
+    }
     name_at_risk="# at risk"
   }
+    
   d=data.frame(temps,cens,groupe)
   if (any(is.na(d$temps) | is.na(d$cens) | is.na(d$groupe))){
     cat(paste(sum(is.na(d$temps) | is.na(d$cens) | is.na(d$groupe))," rows deleted due to missing values\n",sep=""))
   }
   d=d[I(!is.na(d$temps) & !is.na(d$cens) & !is.na(d$groupe)),]
+  
+  if (is.null(xlab)){xlab=varnames[1]}
+  if (is.null(ylab)){ylab="Survival"}
+  if (is.null(col)){col=1:nlevels(d$groupe)}
     
   if (is.null(times.print)){
     times.print=c(0:4)*max(d$temps)/4
@@ -66,7 +68,7 @@ function(formula,data,test=TRUE,times.print=NULL,xlab=NULL,ylab=NULL,
 
 #  mar=c(bottom, left, top, right)
   par(mar=c(nrow(n.risk)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
-  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=FALSE,xlab=xlab,ylab=ylab,...)
+  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,...)
   if (test){text(max(d$temps)/20,0.05,p.value,adj=c(0,0))}  
   mtext(side=1,at=-0.065*max(times.print),line=4,name_at_risk,cex=cex.mtext,adj=1)
   for (i in 2:nrow(n.risk)){

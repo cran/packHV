@@ -5,11 +5,12 @@
 Plots a multi cross table on a graph
 }
 \usage{
-plot_multi.table(data, vars)
+plot_multi.table(data, vars, main = "")
 }
 \arguments{
   \item{data}{data frame in which we can find \code{vars}}
   \item{vars}{vector of character string of covariates}
+  \item{main}{main title of the plot}
 }
 \value{None}
 \author{Hugo Varet}

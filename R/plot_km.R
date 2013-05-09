@@ -1,8 +1,12 @@
 plot_km <-
-function(formula,data,test=TRUE,conf.int=FALSE,times.print=NULL,xlab=NULL,ylab=NULL,
-                 left=4.5,bottom=5,cex.mtext=1,lwd=2,col=NULL,...){
+function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,nrisk.labels=NULL,
+                 xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=1,lwd=2,col=NULL,...){
   # formula: Surv(temps,cens)~groupe, ces variables étant dans data
+  # test: TRUE to perform a log-rank test (set to FALSE if only one level in groupe)
+  # xy.pvalue: vector of length 2 (coordinates where to place the p-value of the test)
+  # conf.int: TRUE to add the confidence interval(s) of the curves
   # times.print: temps auxquels les n at risk s'affichent
+  # nrisk.labels: character vector to customize the levels of groupe
   # left: nb de lignes dans la marge de gauche (controle donc la largeur)
   # bottom: nb de lignes en plus de celles du tableau dans la marge du bas (utile pour juxtaposer pls graph)
   # attention: dans formula, il ne faut que des noms de variables, i.e. pas de cut(x,...)
@@ -59,6 +63,7 @@ function(formula,data,test=TRUE,conf.int=FALSE,times.print=NULL,xlab=NULL,ylab=N
     }
   }
   n.risk[2:nrow(n.risk),1]=table(groupe)
+  if (!is.null(nrisk.labels)){rownames(n.risk)[-1]=nrisk.labels}
 
   if (test){
     diff=survdiff(Surv(temps,cens)~groupe,data=d)
@@ -68,8 +73,10 @@ function(formula,data,test=TRUE,conf.int=FALSE,times.print=NULL,xlab=NULL,ylab=N
 
 #  mar=c(bottom, left, top, right)
   par(mar=c(nrow(n.risk)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
-  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,...)
-  if (test){text(max(d$temps)/20,0.05,p.value,adj=c(0,0))}  
+  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,ylim=ylim,...)
+  if (test){
+    if (!is.null(xy.pvalue)){text(xy.pvalue[1],xy.pvalue[2],p.value,adj=c(0,0))}else{text(max(d$temps)/20,0.05,p.value,adj=c(0,0))}
+  }  
   mtext(side=1,at=-0.065*max(times.print),line=4,name_at_risk,cex=cex.mtext,adj=1)
   for (i in 2:nrow(n.risk)){
     mtext(side=1,at=times.print,line=i+3,n.risk[i,],cex=cex.mtext)

@@ -45,7 +45,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
     vars=vars[vars %in% names(data)]
   }
   fun_type=function(var){class(var)}                                            # deleting covariates != numeric, character, logical or factor
-  delete=vars[!I(apply(data[,vars],2,fun_type) %in% c("integer","numeric","factor","character","logical"))]
+  delete=vars[!I(apply(as.data.frame(data[,vars]),2,fun_type) %in% c("integer","numeric","factor","character","logical"))]
   if (length(delete)>0){
     cat(paste("Variable(s) ",paste(delete,collapse=", ")," not numeric, neither factor, neither character, neither logical\n",sep=""))
   }

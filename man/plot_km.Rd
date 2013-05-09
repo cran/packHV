@@ -5,18 +5,23 @@
 Kaplan-Meier plot with number of subjects at risk below
 }
 \usage{
-plot_km(formula, data, test = TRUE, conf.int = FALSE, times.print = NULL, 
-        xlab = NULL, ylab = NULL, left = 4.5, bottom = 5, cex.mtext = 1,
-        lwd = 2, col = NULL, ...)
+plot_km(formula, data, test = TRUE, xy.pvalue = NULL, conf.int = FALSE, 
+        times.print = NULL, nrisk.labels = NULL, xlab = NULL, ylab = NULL, 
+        ylim = c(0, 1.02), left = 4.5, bottom = 5, cex.mtext = 1, lwd = 2, 
+        col = NULL, ...)
+
 }
 \arguments{
   \item{formula}{same formula than in \code{\link{survfit}} (\code{Surv(time,cens)~group} or \code{Surv(time,cens)~1})}
   \item{data}{data frame with \code{time}, \code{cens} and \code{group}}
   \item{test}{boolean, \code{TRUE} to compute and display the p-value of the log-rank test}
+  \item{xy.pvalue}{numeric vector of length 2, coordinates where to display the p-value of the log-rank test}
   \item{conf.int}{boolean, \code{TRUE} to display the confidence interval of the curve(s)}
   \item{times.print}{numeric vector, times at which to display the numbers of subjects at risk}
+  \item{nrisk.labels}{character vector to modify the levels of \code{group} in the table below the curves}
   \item{xlab}{character string, label of the time axis}
   \item{ylab}{character string, label of the y axis}
+  \item{ylim}{numeric vector of length 2, minimum and maximum of the y-axis}
   \item{left}{integer, size of left margin}
   \item{bottom}{integer, number of lines in addition of the table below the graph}
   \item{cex.mtext}{numeric, size of the numbers of subjects at risk}

@@ -1,4 +1,4 @@
-9939a6d2437a1ee07dc7a4fe0d94c44f *DESCRIPTION
+afcdf597f8d623002e0c8d0cc8bc0d33 *DESCRIPTION
 df390c53434517b304ac5db487184641 *NAMESPACE
 3e1cdfd6ccfa3e2564b147ff20d61d04 *R/IC_OR_glm.R
 c6ea727b23c87b2cee95d8d71d0dc6ce *R/IC_RR_coxph.R
@@ -6,10 +6,10 @@ feeae1629caeaa0f37a15b8785b51213 *R/compare.R
 6a26dd0618a3a3e49318f9e57e346f4d *R/convert_factor.R
 21d6419033641a43f1413712e33da870 *R/convert_zero_NA.R
 cdc7cf196bf5f87799ee3dfdd8b0ac37 *R/cut_quanti.R
-c023b667bf2ba8109e222efc60973b4d *R/desc.R
+27795dfb9900586fd873af6241da9ee6 *R/desc.R
 6be03b0413e0c728ee6ab68512292bf7 *R/hist_boxplot.R
 93602e87bbb820d8ec3b44295c7b3c05 *R/multi.table.R
-39a5c30c6181450cddaafcf54fb9634e *R/plot_km.R
+ba054ea0648f97614a46113f033ee88f *R/plot_km.R
 56c1edab2e81eca9102936b5c561a7bf *R/plot_mm.R
 54379b1f23a4d34ed3c0d27eb2646c13 *R/plot_multi.table.R
 d967a11ee54e6240b239bc0232a6a669 *R/plot_reg.R
@@ -22,8 +22,8 @@ b9a681cf8e1b2fafb0ef0cf5ed73c507 *man/convert_factor.Rd
 24d9e4e58e85950ba3561139fb22ccc7 *man/desc.Rd
 a886ea93c62070539c6b3137eb482731 *man/hist_boxplot.Rd
 911f7aff7e6347cc0e51063c56f22e9c *man/multi.table.Rd
-18e7626a8ecddc79126001735fe0e5bc *man/packHV-package.Rd
-91722e954cca4f8c52f872e1877a461c *man/plot_km.Rd
+2f013381a6a4e0b1afdd10d0740dddbf *man/packHV-package.Rd
+481955bdaf9e9116d108eec8e7961562 *man/plot_km.Rd
 33e003deed4ac96526c13417d1b5a5c9 *man/plot_mm.Rd
 6ac9339485f6a430041479b174e426d8 *man/plot_multi.table.Rd
 dc26e4258f59deaddfefa7a0af149fea *man/plot_reg.Rd

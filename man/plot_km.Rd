@@ -7,12 +7,12 @@ Kaplan-Meier plot with number of subjects at risk below
 \usage{
 plot_km(formula, data, test = TRUE, xy.pvalue = NULL, conf.int = FALSE, 
         times.print = NULL, nrisk.labels = NULL, xlab = NULL, ylab = NULL, 
-        ylim = c(0, 1.02), left = 4.5, bottom = 5, cex.mtext = 1, lwd = 2, 
-        col = NULL, ...)
+        ylim = c(0, 1.02), left = 4.5, bottom = 5, cex.mtext = par("cex"), 
+        lwd = 2, col = NULL, ...)
 
 }
 \arguments{
-  \item{formula}{same formula than in \code{\link{survfit}} (\code{Surv(time,cens)~group} or \code{Surv(time,cens)~1})}
+  \item{formula}{same formula than in \code{\link{survfit}} (\code{Surv(time,cens)~group} or \code{Surv(time,cens)~1}), where \code{cens} must equal to 0 (censorship) or 1 (failure)}
   \item{data}{data frame with \code{time}, \code{cens} and \code{group}}
   \item{test}{boolean, \code{TRUE} to compute and display the p-value of the log-rank test}
   \item{xy.pvalue}{numeric vector of length 2, coordinates where to display the p-value of the log-rank test}

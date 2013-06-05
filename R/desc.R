@@ -1,6 +1,7 @@
 desc <-
-function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="med",
-              test=TRUE,noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,language="english"){
+function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="mean",
+                  test.quanti="param",test=TRUE,noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,
+                  language="english"){
   # data: the data frame in which we can find
   #   vars: c("var1",..,"varN")
   #   group: NULL to describe the whole population
@@ -8,6 +9,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
   #          of "group" on each variable in vars
   # whole: boolean, TRUE to add a column with the whole statistics when comparing groups (set to FALSE if group=NULL)
   # type.quanti: "mean" returns mean (sd) and "med" returns med [Q1,Q3] for quantitative covariates (mean_mm or med_mm to add (min;max))
+  # test.quanti: "param" to compute parametric test for quantitative covariates (t-test or anova) or "nonparam" for non parametric tests (Wilcoxon or Kruskal-Wallis)
   # test: boolean, if TRUE tests will be performed:
   #   chisq/fisher exact test for qualitative covariates (depending on whether any cell number is <5),
   #   wilcoxon/kruskal if type.quanti="med" for quantitative covariates
@@ -16,13 +18,14 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
   # justify: boolean, if TRUE columns are justified on the left or on the right (FALSE if export)
   # digits: number of digits of the statistics (mean, sd, median, min, max, Q1, Q3, %), p-values have always 3 digits
   # file.export: character string of the path where to export the returning table
-  # language: character string "english" or "french" which can change the name of the columns (moreover, french will replace "." by ",")
+  # language: character string "english" or "french" which can change the names of the columns (moreover, french will replace "."s by ","s)
 
   name_data=deparse(substitute(data))
   
   ############################### checkings ####################################
   if (!is.null(file.export)){justify=FALSE}
-  if (!is.data.frame(data)){stop(paste(name_data," is not a data frame",sep=""))}
+  if (!is.data.frame(data)){stop(paste(name_data," is not a data frame\n",sep=""))}
+  if (!I(test.quanti %in% c("param","nonparam"))){stop("argument test.quanti must be equal to \"param\" or \"nonparam\"")}
   if (language=="french"){
     whole_pop="Echantillon entier"; pvalue="p-valeur"; parameter="Variable";
   } else{
@@ -109,7 +112,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
       p.value=NULL
       if (test){
         p.value=NA
-        if (type.quanti %in% c("mean","mean_mm")){
+        if (test.quanti=="param"){
           if (nb.group>2){
             p.value=tryCatch(anova(lm(var.g~group.g))[1,5],
                      error=function(e){cat(paste("Error: problem of ANOVA with covariate",vars[i],"\n"));return(NA);},
@@ -127,8 +130,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
                                          options(warn=0);
                                          return(p)})
           }
-        }
-        if (type.quanti %in% c("med","med_mm")){
+        } else {
           if (nb.group>2){
             p.value=tryCatch(kruskal.test(var.g~group.g)$p.value,
                      error=function(e){cat(paste("Error: problem of Kruskal-Wallis test with covariate",vars[i],"\n"));return(NA);},
@@ -159,7 +161,12 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
       }
     
     } else{                                                                     # for each factor/character/logical variable
-      var=factor(var); var.g=var[!is.na(group)];                                # transforming character and factor in factor 
+      var=factor(var,levels=if(is.factor(var)){                                 # transforming characters and factors in factors
+                              levels(var)
+                            }else{
+                              sort(unique.default(as.character(var)),na.last=TRUE)
+                            })
+      var.g=var[!is.na(group)]                                 
       tab=table(var.g,group.g)
       tab.p=round(100*prop.table(tab,margin=2),digits)
       if (whole){

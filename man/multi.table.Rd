@@ -2,12 +2,16 @@
 \alias{multi.table}
 \title{Multi cross table}
 \description{Builds a big cross table between several covariates}
+
 \usage{multi.table(data, vars)}
+
 \arguments{
   \item{data}{data frame in which we can find \code{vars}}
   \item{vars}{vector of character string of covariates}
 }
-\value{None}
+
+\value{A matrix containing all the contingency tables between the covariates}
+
 \author{Hugo Varet}
 
 \seealso{\code{\link{plot_multi.table}}}

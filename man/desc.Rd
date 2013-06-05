@@ -5,8 +5,9 @@
 
 \usage{
 desc(data, vars, group = NULL, whole = TRUE, vars.labels = vars,
-     group.labels = NULL, type.quanti = "med", test = TRUE, noquote = TRUE,
-     justify = TRUE, digits = 2, file.export = NULL, language = "english")
+     group.labels = NULL, type.quanti = "mean", test.quanti = "param", 
+     test = TRUE, noquote = TRUE, justify = TRUE, digits = 2, file.export = NULL,
+     language = "english")
 }
 \arguments{
   \item{data}{data frame to describe in which we can find \code{vars} and \code{group}}
@@ -16,6 +17,7 @@ desc(data, vars, group = NULL, whole = TRUE, vars.labels = vars,
   \item{vars.labels}{vector of character string for sweeter names of covariates in the output}
   \item{group.labels}{vector of character string for sweeter column names}  
   \item{type.quanti}{character string, \code{"med"} to compute median [Q1;Q3], \code{"mean"} to compute mean (sd) or \code{"med_mm"} or \code{"mean_mm"} to add (min;max)}
+  \item{test.quanti}{character string, \code{"param"} to compute parametric tests for quantitative covariates (t-test or ANOVA) or \code{"nonparam"} for non parametric tests (Wilcoxon test or Kruskal-Wallis test)}
   \item{test}{boolean, \code{TRUE} to perform tests (\code{FALSE} if \code{group} is \code{NULL}): Khi-2 or Fisher exact test for categorical covariates, t-test/ANOVA or Wilcoxon/Kruskal-Wallis Rank Sum Test for numerical covariates}
   \item{noquote}{boolean, \code{TRUE} to hide quotes when printing the table}
   \item{justify}{boolean, \code{TRUE} to justify columns on right or left (\code{FALSE} if export)}

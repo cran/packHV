@@ -11,7 +11,7 @@ plot_reg(x, y, pch = 19, xlab = NULL, ylab = NULL, ...)
   \item{pch}{type of points}
   \item{xlab}{character string, label of the x axis, \code{NULL} by default}
   \item{ylab}{character string, label of the y axis, \code{NULL} by default}
-  \item{\dots}{other arguments to be passed in \code{plot()}}
+  \item{\dots}{other arguments to be passed in \code{\link{plot}}}
 }
 
 \value{None}

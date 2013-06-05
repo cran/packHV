@@ -1,6 +1,6 @@
 plot_km <-
 function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,nrisk.labels=NULL,
-                 xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=1,lwd=2,col=NULL,...){
+                 xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=par("cex"),lwd=2,col=NULL,...){
   # formula: Surv(temps,cens)~groupe, ces variables étant dans data
   # test: TRUE to perform a log-rank test (set to FALSE if only one level in groupe)
   # xy.pvalue: vector of length 2 (coordinates where to place the p-value of the test)
@@ -47,9 +47,15 @@ function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,n
   if (is.null(xlab)){xlab=varnames[1]}
   if (is.null(ylab)){ylab="Survival"}
   if (is.null(col)){col=1:nlevels(d$groupe)}
-    
+  
+#  mar=c(bottom, left, top, right)
+  par(mar=c(1+nlevels(groupe)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
+  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,ylim=ylim,...)
+  
+  # calcul des n at risk
   if (is.null(times.print)){
-    times.print=c(0:4)*max(d$temps)/4
+    times.print=axis(1,labels=FALSE,tick=FALSE)
+    times.print=times.print[times.print>=0]
   }
   n.risk=matrix(NA,nrow=1+nlevels(groupe),ncol=length(times.print),dimnames=list(c("temps",levels(groupe)),NULL))
   n.risk[1,]=times.print
@@ -62,24 +68,25 @@ function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,n
       n.risk[lev,]=tmp2
     }
   }
-  n.risk[2:nrow(n.risk),1]=table(groupe)
   if (!is.null(nrisk.labels)){rownames(n.risk)[-1]=nrisk.labels}
-
+    
+  # affichage des n at risk
+  range=range(axis(1,labels=FALSE,tick=FALSE))
+  mtext(side=1,at=-0.065*(range[2]-range[1])+range[1],line=4,name_at_risk,cex=cex.mtext,adj=1)
+  for (i in 2:nrow(n.risk)){
+    mtext(side=1,at=times.print,line=i+3,n.risk[i,],cex=cex.mtext)
+    mtext(side=1,at=-0.065*(range[2]-range[1])+range[1],line=i+3,rownames(n.risk)[i],cex=cex.mtext,adj=1)
+  } 
+  
+  # Log-Rank test
   if (test){
     diff=survdiff(Surv(temps,cens)~groupe,data=d)
     p.value=1-pchisq(diff$chisq,df=length(levels(d$groupe))-1)
     p.value=paste("p",ifelse(p.value<0.001,"<0.001",paste("=",round(p.value,3),sep="")),sep="")
-  }
-
-#  mar=c(bottom, left, top, right)
-  par(mar=c(nrow(n.risk)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
-  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,ylim=ylim,...)
-  if (test){
-    if (!is.null(xy.pvalue)){text(xy.pvalue[1],xy.pvalue[2],p.value,adj=c(0,0))}else{text(max(d$temps)/20,0.05,p.value,adj=c(0,0))}
-  }  
-  mtext(side=1,at=-0.065*max(times.print),line=4,name_at_risk,cex=cex.mtext,adj=1)
-  for (i in 2:nrow(n.risk)){
-    mtext(side=1,at=times.print,line=i+3,n.risk[i,],cex=cex.mtext)
-    mtext(side=1,at=-0.065*max(times.print),line=i+3,rownames(n.risk)[i],cex=cex.mtext,adj=1)
+    if (!is.null(xy.pvalue)){
+      text(xy.pvalue[1],xy.pvalue[2],p.value,adj=c(0,0))
+    } else{
+      text((range[2]-range[1])/20 + range[1],0.05,p.value,adj=c(0,0))
+    }
   }  
 }

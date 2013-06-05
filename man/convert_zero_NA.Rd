@@ -1,13 +1,13 @@
 \name{convert_zero_NA}
 \alias{convert_zero_NA}
 \title{Convert 0s in NA}
-\description{Converts 0s in NA}
+\description{Converts 0s in \code{NA}}
 
 \usage{convert_zero_NA(data, vars)}
 
 \arguments{
-  \item{data}{data frame in which we can find \code{vars}}
-  \item{vars}{vector of character string of covariates}
+  \item{data}{the data frame in which we can find \code{vars}}
+  \item{vars}{a character vector of covariates for which to transform 0s in \code{NA}}
 }
 
 \value{The modified data frame}

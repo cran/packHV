@@ -5,6 +5,7 @@
 \usage{
 hist_boxplot(x, freq = TRUE, density = FALSE, main = NULL, xlab = NULL, ...)
 }
+
 \arguments{
   \item{x}{a numeric vector}
   \item{freq}{boolean, \code{TRUE} for frequency or \code{FALSE} probability on the y axis}

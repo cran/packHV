@@ -1,6 +1,6 @@
 plot_mm <-
-function(formula,data,col.spag=1,col.mean=1,type="spaghettis",at.x=NULL,at.y=NULL,
-                   xlab=NULL,ylab=NULL,main="",lwd.spag=1,lwd.mean=4){
+function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times=TRUE,
+                 xlab=NULL,ylab=NULL,main="",lwd.spag=1,lwd.mean=4,...){
   # formula: obs~time+(group|id) or obs~time+(1|id)
   # data: data frame in which we can find obs, time, group and id
   # col.spag: vector of length nrow(data) with colors (one for each individual)
@@ -30,13 +30,9 @@ function(formula,data,col.spag=1,col.mean=1,type="spaghettis",at.x=NULL,at.y=NUL
 
   if (is.null(xlab)){xlab=varnames[2]}
   if (is.null(ylab)){ylab=varnames[1]}  
-  if (is.null(at.x)){at.x=unique(data$time)}
-  if (is.null(at.y)){at.y=seq(min(data$obs,na.rm=TRUE),max(data$obs,na.rm=TRUE),length=4)}
   
-  plot.new()
-  plot.window(xlim=range(data$time,na.rm=TRUE),ylim=range(data$obs,na.rm=TRUE))
-  axis(1,at=at.x); axis(2,at=at.y);
-  title(main=main,xlab=xlab,ylab=ylab)
+  plot(data$time,data$obs,col="white",xlab=xlab,ylab=ylab,main=main,bty="n",...)
+  if (tick.times){axis(1,at=unique(data$time),labels=FALSE)}
   if (type %in% c("spaghettis","both")){                                        # spaghettis
     for (i in unique(data$id)){
       data.i=data[data$id==i,]
@@ -49,6 +45,6 @@ function(formula,data,col.spag=1,col.mean=1,type="spaghettis",at.x=NULL,at.y=NUL
       data.g=aggregate(data.g,by=list(data.g$time),FUN=function(x){mean(x,na.rm=TRUE)})
       col.g=col.mean[i]
       lines(data.g$time,data.g$obs,col=col.g,lwd=lwd.mean)  
-    }
+    }               
   }
 }

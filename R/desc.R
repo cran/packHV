@@ -1,31 +1,40 @@
-desc <-
-function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="mean",
+#' Making descriptive statistics
+#'
+#' Makes descriptive statistics of a data frame according to a group covariate or not, can export the results
+#'
+#' @param data data frame to describe in which we can find \code{vars} and \code{group}
+#' @param vars vector of character strings of the covariates to describe
+#' @param group character string, statistics created for each levels of this covariate
+#' @param whole boolean, \code{TRUE} to add a column with the whole statistics when comparing groups (set to \code{FALSE} if \code{group=NULL})
+#' @param vars.labels vector of character string for sweeter names of covariates in the output
+#' @param group.labels vector of character string for sweeter column names
+#' @param type.quanti character string, \code{"med"} to compute median [Q1;Q3], \code{"mean"} to compute mean (sd), \code{"mean_med"} to compute both mean (sd) and median [Q1;Q3] or \code{"med_mm"}, \code{"mean_mm"} or \code{"mean_med_mm"} to add (min;max)
+#' @param test.quanti character string, \code{"param"} to compute parametric tests for quantitative covariates (t-test or ANOVA) or \code{"nonparam"} for non parametric tests (Wilcoxon test or Kruskal-Wallis test)
+#' @param test boolean, \code{TRUE} to perform tests (\code{FALSE} if \code{group} is \code{NULL}): Khi-2 or Fisher exact test for categorical covariates, t-test/ANOVA or Wilcoxon/Kruskal-Wallis Rank Sum Test for numerical covariates
+#' @param noquote boolean, \code{TRUE} to hide quotes when printing the table
+#' @param justify boolean, \code{TRUE} to justify columns on right or left (\code{FALSE} if export)
+#' @param digits number of digits of the statistics (mean, sd, median, min, max, Q1, Q3, \%), p-values always have 3 digits
+#' @param file.export character string, name of the XLS file exported
+#' @param language character string, \code{"french"} or \code{"english"}
+#' @return A matrix of the descriptive statistics
+#' @author Hugo Varet
+#' @examples
+#' cgd$steroids=factor(cgd$steroids)
+#' cgd$status=factor(cgd$status)
+#' desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
+
+# last updated: may 30, 2013
+
+desc=function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="mean",
                   test.quanti="param",test=TRUE,noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,
                   language="english"){
-  # data: the data frame in which we can find
-  #   vars: c("var1",..,"varN")
-  #   group: NULL to describe the whole population
-  #          or "group" to describe each level of group and to test the impact
-  #          of "group" on each variable in vars
-  # whole: boolean, TRUE to add a column with the whole statistics when comparing groups (set to FALSE if group=NULL)
-  # type.quanti: "mean" returns mean (sd) and "med" returns med [Q1,Q3] for quantitative covariates (mean_mm or med_mm to add (min;max))
-  # test.quanti: "param" to compute parametric test for quantitative covariates (t-test or anova) or "nonparam" for non parametric tests (Wilcoxon or Kruskal-Wallis)
-  # test: boolean, if TRUE tests will be performed:
-  #   chisq/fisher exact test for qualitative covariates (depending on whether any cell number is <5),
-  #   wilcoxon/kruskal if type.quanti="med" for quantitative covariates
-  #   t/anova if type.quanti="mean" for quantitative covariates
-  # noquote: boolean, if TRUE "" are deleted when printing the table (must be FALSE to export in Latex)
-  # justify: boolean, if TRUE columns are justified on the left or on the right (FALSE if export)
-  # digits: number of digits of the statistics (mean, sd, median, min, max, Q1, Q3, %), p-values have always 3 digits
-  # file.export: character string of the path where to export the returning table
-  # language: character string "english" or "french" which can change the names of the columns (moreover, french will replace "."s by ","s)
-
+                  
   name_data=deparse(substitute(data))
   
   ############################### checkings ####################################
   if (!is.null(file.export)){justify=FALSE}
   if (!is.data.frame(data)){stop(paste(name_data," is not a data frame\n",sep=""))}
-  if (!I(test.quanti %in% c("param","nonparam"))){stop("argument test.quanti must be equal to \"param\" or \"nonparam\"")}
+  if (test & !I(test.quanti %in% c("param","nonparam"))){stop("argument test.quanti must be equal to \"param\" or \"nonparam\"")}
   if (language=="french"){
     whole_pop="Echantillon entier"; pvalue="p-valeur"; parameter="Variable";
   } else{
@@ -47,48 +56,37 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
     vars.labels=vars.labels[vars %in% names(data)]
     vars=vars[vars %in% names(data)]
   }
-  fun_type=function(var){class(var)}                                            # deleting covariates != numeric, character, logical or factor
-  delete=vars[!I(apply(as.data.frame(data[,vars]),2,fun_type) %in% c("integer","numeric","factor","character","logical"))]
+  # deleting covariates != numeric, character, logical or factor
+  delete=vars[!I(apply(as.data.frame(data[,vars]),2,class) %in% c("integer","numeric","factor","character","logical"))]
   if (length(delete)>0){
     cat(paste("Variable(s) ",paste(delete,collapse=", ")," not numeric, neither factor, neither character, neither logical\n",sep=""))
   }
   vars.labels=vars.labels[!I(vars %in% delete)]; vars=vars[!I(vars %in% delete)];
     
   ########################## functions fun.quanti ##############################
-  if (!I(type.quanti %in% c("mean","med","mean_mm","med_mm"))){
-    stop("type.quanti must be equal to \"mean\", \"med\", \"mean_mm\" or \"med_mm\"")
-  } else{
-    wt=ifelse(test," and Wilcoxon test","")
-    tt=ifelse(test," and t-test","")
-    khi2_fisher=ifelse(test," and khi-2 or Fisher exact test","")
-    if (type.quanti=="med"){
-      fun.quanti=function(var){
-        q=round(quantile(var,probs=c(0.25,0.5,0.75),na.rm=TRUE),digits)
-        return(paste(q[2]," [",q[1],";",q[3],"]",sep=""))
-      }
-      cat(paste("med [Q1;Q3]",wt," for numeric variables\n",sep=""))    
-    } 
-    if (type.quanti=="med_mm"){
-      fun.quanti=function(var){
-        q=round(quantile(var,probs=c(0,0.25,0.5,0.75,1),na.rm=TRUE),digits)
-        return(paste(q[3]," [",q[2],";",q[4],"]"," (",q[1],";",q[5],")",sep=""))
-      }
-      cat(paste("med [Q1;Q3] (min;max)",wt," for numeric variables\n",sep=""))    
-    } 
-    if (type.quanti=="mean"){
-      fun.quanti=function(var){
-        return(paste(round(mean(var,na.rm=TRUE),digits)," (",round(sd(var,na.rm=TRUE),digits),")",sep=""))
-      }
-      cat(paste("mean (sd)",tt," for numeric variables\n",sep=""))    
-    }
-    if (type.quanti=="mean_mm"){
-      fun.quanti=function(var){
-        return(paste(round(mean(var,na.rm=TRUE),digits)," (",round(sd(var,na.rm=TRUE),digits),")",
-                     " (",round(min(var,na.rm=TRUE),digits),";",round(max(var,na.rm=TRUE),digits),")",sep=""))
-      }
-      cat(paste("mean (sd) (min;max)",tt," for numeric variables\n",sep=""))    
-    }
+  if (!I(type.quanti %in% c("mean","med","mean_mm","med_mm","mean_med","mean_med_mm"))){
+    stop("type.quanti must be equal to \"mean\", \"med\", \"mean_mm\", \"med_mm\", \"mean_med\" or \"mean_med_mm\"")
   }
+  type.test.quanti=ifelse(test,ifelse(test.quanti=="nonparam"," and Wilcoxon/Kruskal-Wallis test"," and t-test/anova"),"")
+  khi2_fisher=ifelse(test," and khi-2 or Fisher exact test","")
+  fun.quanti=function(x,type.quanti){
+    mean=round(mean(x,na.rm=TRUE),digits); sd=round(sd(x,na.rm=TRUE),digits);
+    q=round(quantile(x,probs=c(0,0.25,0.5,0.75,1),na.rm=TRUE),digits)
+    names(q)=c("min","q1","med","q3","max")
+    return(switch(type.quanti,   
+       "mean" = paste(mean," (",sd,")",sep=""),
+       "med" = paste(q["med"]," [",q["q1"],";",q["q3"],"]",sep=""),
+       "mean_mm" = paste(mean," (",sd,")"," (",q["min"],";",q["max"],")",sep=""),
+       "med_mm" = paste(q["med"]," [",q["q1"],";",q["q3"],"]"," (",q["min"],";",q["max"],")",sep=""),
+       "mean_med" = paste(mean," (",sd,") ",q["med"]," [",q["q1"],";",q["q3"],"]",sep=""),
+       "mean_med_mm" = paste(mean," (",sd,") ",q["med"]," [",q["q1"],";",q["q3"],"]"," (",q["min"],";",q["max"],")",sep="")))
+  }
+  if (type.quanti=="med"){cat(paste("med [Q1;Q3]",type.test.quanti," for numeric variables\n",sep=""))} 
+  if (type.quanti=="med_mm"){cat(paste("med [Q1;Q3] (min;max)",type.test.quanti," for numeric variables\n",sep=""))} 
+  if (type.quanti=="mean"){cat(paste("mean (sd)",type.test.quanti," for numeric variables\n",sep=""))}
+  if (type.quanti=="mean_mm"){cat(paste("mean (sd) (min;max)",type.test.quanti," for numeric variables\n",sep=""))}
+  if (type.quanti=="mean_med"){cat(paste("mean (sd) med [Q1;Q3]",type.test.quanti," for numeric variables\n",sep=""))}
+  if (type.quanti=="mean_med_mm"){cat(paste("mean (sd) med [Q1;Q3] (min;max)",type.test.quanti," for numeric variables\n",sep=""))}    
   cat(paste("N (%)",khi2_fisher," for categorical variables\n",sep=""))
   
   ####################### setting the output matrix ############################
@@ -107,8 +105,8 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
     if (is.numeric(var)){                                                       # for each numeric variable
       var.g=data.g[,vars[i]]
       res=NULL
-      for (lev_i in levgp){res=c(res,fun.quanti(var.g[group.g==lev_i]))}
-      if (whole){res=c(fun.quanti(var),res)}
+      for (lev_i in levgp){res=c(res,fun.quanti(var.g[group.g==lev_i],type.quanti))}
+      if (whole){res=c(fun.quanti(var,type.quanti),res)}
       p.value=NULL
       if (test){
         p.value=NA
@@ -168,6 +166,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
                             })
       var.g=var[!is.na(group)]                                 
       tab=table(var.g,group.g)
+      tab.test=table(var.g,group.g)      
       tab.p=round(100*prop.table(tab,margin=2),digits)
       if (whole){
         tab=cbind(table(var),tab)
@@ -177,21 +176,21 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
       p.value=NULL
       if (test){
         p.value=NA
-        if (nrow(tab)>1){
-          if (any(tab<5)){
-            p.value=tryCatch(fisher.test(tab)$p.value,
+        if (nrow(tab.test)>1){
+          if (any(tab.test<5)){
+            p.value=tryCatch(fisher.test(tab.test)$p.value,
                      error=function(e){cat(paste("Error: problem of Fisher test with covariate",vars[i],"\n"));return(NA);},
                      warning=function(w){options(warn=-1);
                                          cat(paste("Warning: problem of Fisher test with covariate",vars[i],"\n"));
-                                         p=fisher.test(tab)$p.value;
+                                         p=fisher.test(tab.test)$p.value;
                                          options(warn=0);
                                          return(p)})
           } else{
-            p.value=tryCatch(chisq.test(tab)$p.value,
+            p.value=tryCatch(chisq.test(tab.test,correct=FALSE)$p.value,
                      error=function(e){cat(paste("Error: problem of khi-2 test with covariate",vars[i],"\n"));return(NA);},
                      warning=function(w){options(warn=-1);
                                          cat(paste("Warning: problem of khi-2 test with covariate",vars[i],"\n"));
-                                         p=chisq.test(tab)$p.value;
+                                         p=chisq.test(tab.test,correct=FALSE)$p.value;
                                          options(warn=0);
                                          return(p)})
           }
@@ -230,7 +229,7 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
     out[,1]=format(out[,1],justify="right")
     out[,2]=format(out[,2],justify="left")
     out[,-c(1:2,if(test){ncol(out)}else{NULL})]=format(out[,-c(1:2,if(test){ncol(out)}else{NULL})],justify="right")
-    if (test){out[,ncol(out)]=format(out[,ncol(out)],justify="left")    }
+    if (test){out[,ncol(out)]=format(out[,ncol(out)],justify="left")}
   }  
   if (all(out[,2]==rep("",nrow(out)))){out=out[,-2]}
   
@@ -246,3 +245,9 @@ function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type
     return(out)
   }
 }
+
+## cgd: data available in the survival package
+#cgd$steroids=factor(cgd$steroids)
+#cgd$status=factor(cgd$status)
+#desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
+ 

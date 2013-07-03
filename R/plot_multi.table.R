@@ -1,5 +1,17 @@
-plot_multi.table <-
-function(data,vars,main=""){
+#' Plot a multi cross table
+#'
+#' Plots a multi cross table on a graph
+#'
+#' @param data the data frame in which we can find \code{vars}
+#' @param vars vector of character string of covariates
+#' @param main main title of the plot
+#' @return None
+#' @author Hugo Varet
+#' @seealso \code{\link{multi.table}}
+#' @examples
+#' plot_multi.table(cgd,c("treat","sex","inherit"))
+
+plot_multi.table=function(data,vars,main=""){
   tab=multi.table(data,vars)
   par(mar=c(1, 1, 1, 1) + 0.1)
   plot.new()

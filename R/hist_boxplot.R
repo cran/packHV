@@ -1,5 +1,21 @@
-hist_boxplot <-
-function(x,freq=TRUE,density=FALSE,main=NULL,xlab=NULL,...){
+#' Plot a histogram with a boxplot below
+#'
+#' Plots a histogram with a boxplot below
+#'
+#' @param x a numeric vector
+#' @param freq boolean, \code{TRUE} for frequency or \code{FALSE} probability on the y axis
+#' @param density boolean, \code{TRUE} to plot the estimated density
+#' @param main character string, main title of the histogram
+#' @param xlab character string, label of the x axis
+#' @param \dots other arguments to be passed in \code{hist()}
+#' @return None
+#' @author Hugo Varet
+#' @examples
+#' par(mfrow=c(1,2))
+#' hist_boxplot(rnorm(100),col="lightblue",freq=TRUE)
+#' hist_boxplot(rnorm(100),col="lightblue",freq=FALSE,density=TRUE)
+
+hist_boxplot=function(x,freq=TRUE,density=FALSE,main=NULL,xlab=NULL,...){
   abs <- deparse(substitute(x))
   if (is.null(xlab)){xlab=abs}
   ted <- hist(x,plot=FALSE)
@@ -26,3 +42,7 @@ function(x,freq=TRUE,density=FALSE,main=NULL,xlab=NULL,...){
     lines(density(x),lwd=2,col="red")
   }
 }
+
+#par(mfrow=c(1,2))
+#hist_boxplot(rnorm(100),col="lightblue",freq=T)
+#hist_boxplot(rnorm(100),col="lightblue",freq=F,density=T)

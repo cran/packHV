@@ -1,39 +1,77 @@
 \name{plot_km}
 \alias{plot_km}
 \title{Kaplan-Meier plot with number of subjects at risk below}
-\description{
-Kaplan-Meier plot with number of subjects at risk below
-}
 \usage{
-plot_km(formula, data, test = TRUE, xy.pvalue = NULL, conf.int = FALSE, 
-        times.print = NULL, nrisk.labels = NULL, xlab = NULL, ylab = NULL, 
-        ylim = c(0, 1.02), left = 4.5, bottom = 5, cex.mtext = par("cex"), 
-        lwd = 2, col = NULL, ...)
-
+  plot_km(formula, data, test = TRUE, xy.pvalue = NULL,
+    conf.int = FALSE, times.print = NULL,
+    nrisk.labels = NULL, legend = NULL, xlab = NULL,
+    ylab = NULL, ylim = c(0, 1.02), left = 4.5, bottom = 5,
+    cex.mtext = par("cex"), lwd = 2, lty = 1, col = NULL,
+    ...)
 }
 \arguments{
-  \item{formula}{same formula than in \code{\link{survfit}} (\code{Surv(time,cens)~group} or \code{Surv(time,cens)~1}), where \code{cens} must equal to 0 (censorship) or 1 (failure)}
-  \item{data}{data frame with \code{time}, \code{cens} and \code{group}}
-  \item{test}{boolean, \code{TRUE} to compute and display the p-value of the log-rank test}
-  \item{xy.pvalue}{numeric vector of length 2, coordinates where to display the p-value of the log-rank test}
-  \item{conf.int}{boolean, \code{TRUE} to display the confidence interval of the curve(s)}
-  \item{times.print}{numeric vector, times at which to display the numbers of subjects at risk}
-  \item{nrisk.labels}{character vector to modify the levels of \code{group} in the table below the curves}
+  \item{formula}{same formula than in \code{\link{survfit}}
+  (\code{Surv(time,cens)~group} or
+  \code{Surv(time,cens)~1}), where \code{cens} must equal
+  to 0 (censorship) or 1 (failure)}
+
+  \item{data}{data frame with \code{time}, \code{cens} and
+  \code{group}}
+
+  \item{test}{boolean, \code{TRUE} to compute and display
+  the p-value of the log-rank test}
+
+  \item{xy.pvalue}{numeric vector of length 2, coordinates
+  where to display the p-value of the log-rank test}
+
+  \item{conf.int}{boolean, \code{TRUE} to display the
+  confidence interval of the curve(s)}
+
+  \item{times.print}{numeric vector, times at which to
+  display the numbers of subjects at risk}
+
+  \item{legend}{character string (\code{"bottomright"} for
+  example) or numeric vector (\code{c(x,y)}), where to
+  place the legend of the curve(s)}
+
+  \item{nrisk.labels}{character vector to modify the levels
+  of \code{group} in the table below the curve(s)}
+
   \item{xlab}{character string, label of the time axis}
+
   \item{ylab}{character string, label of the y axis}
-  \item{ylim}{numeric vector of length 2, minimum and maximum of the y-axis}
+
+  \item{ylim}{numeric vector of length 2, minimum and
+  maximum of the y-axis}
+
   \item{left}{integer, size of left margin}
-  \item{bottom}{integer, number of lines in addition of the table below the graph}
-  \item{cex.mtext}{numeric, size of the numbers of subjects at risk}
+
+  \item{bottom}{integer, number of lines in addition of the
+  table below the graph}
+
+  \item{cex.mtext}{numeric, size of the numbers of subjects
+  at risk}
+
   \item{lwd}{width of the Kaplan-Meier curve(s)}
+
+  \item{lty}{type of the Kaplan-Meier curve(s)}
+
   \item{col}{color(s) of the Kaplan-Meier curve(s)}
-  \item{\dots}{other arguments to be passed in \code{\link{plot.survfit}}}
+
+  \item{\dots}{other arguments to be passed in
+  \code{\link{plot.survfit}}}
 }
-
-\value{None}
-\author{Hugo Varet}
-
+\value{
+  None
+}
+\description{
+  Kaplan-Meier plot with number of subjects at risk below
+}
 \examples{
 cgd$time=cgd$tstop-cgd$tstart
 plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"))
 }
+\author{
+  Hugo Varet
+}
+

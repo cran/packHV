@@ -1,25 +1,44 @@
-compare <-
-function(d1,d2,id,file.export=NULL){
+#' Comparing two databases assumed to be identical
+#'
+#' Compares two data frames assumed to be identical, prints the differences in the console and also returns the results in a data frame
+#'
+#' @param d1 first data frame
+#' @param d2 second data frame
+#' @param id character string, primary key of the two data bases
+#' @param file.export character string, name of the XLS file exported
+#' @return A data frame containing the differences between the two data bases
+#' @author Hugo Varet
+#' @examples
+#' N=100
+#' data1=data.frame(id=1:N,a=rnorm(N),
+#'                         b=factor(sample(LETTERS[1:5],N,TRUE)),
+#'                         c=as.character(sample(LETTERS[1:5],N,TRUE)),
+#'                         d=as.Date(32768:(32768+N-1),origin="1900-01-01"))
+#' data1$c=as.character(data1$c)
+#' data2=data1
+#' data2$id[3]=4654
+#' data2$a[30]=NA
+#' data2$a[31]=45
+#' data2$b=as.character(data2$b)
+#' data2$d=as.character(data2$d)
+#' data2$e=rnorm(N)
+#' compare(data1,data2,"id")
+
+# last updated: july 02, 2013
+
+compare=function(d1,d2,id,file.export=NULL){
   # d1: first data frame
   # d2: second data frame
   # id: character string of the primary key of d1 and d2
   call=match.call()
   name_d1=deparse(substitute(d1))
   name_d2=deparse(substitute(d2))
-    
-  if (!any(names(d1)==id) | !any(names(d2)==id)){stop(paste("The primary key ",id," is not in the two databases\n",sep=""))}
-  if (length(d1[,id])!=length(unique(d1[,id]))){
-    if (length(d2[,id])!=length(unique(d2[,id]))){
-      stop(paste("Duplicates in ",name_d1," and in ",name_d2,"\n",sep=""))
-    } else{
-      stop(paste("Duplicates in ",name_d1,"\n",sep=""))
-    }
-  } else{
-    if (length(d2[,id])!=length(unique(d2[,id]))){
-      stop(paste("Duplicates in ",name_d2,"\n",sep=""))
-    }    
-  }
-  
+   
+  if (!I(id %in% names(d1)) | !I(id %in% names(d2))){stop(paste("The primary key ",id," is not in the two databases\n",sep=""))}  
+  if (any(duplicated(d1[,id])) & any(duplicated(d2[,id]))){stop(paste("Duplicates in ",name_d1," and in ",name_d2,"\n",sep=""))}
+  if (any(duplicated(d1[,id]))){stop(paste("Duplicates in ",name_d1,"\n",sep=""))}
+  if (any(duplicated(d2[,id]))){stop(paste("Duplicates in ",name_d2,"\n",sep=""))}
+
   cat("Comparing the two databases ",name_d1," and ",name_d2,":\n\n",sep="")
   out_same=TRUE
   out_table=data.frame(matrix(nrow=0,ncol=4,dimnames=list(NULL,c(id,"Covariate",name_d1,name_d2))))
@@ -33,12 +52,12 @@ function(d1,d2,id,file.export=NULL){
   d1=d1[d1[,id] %in% mask.ind,mask.var]; d2=d2[d2[,id] %in% mask.ind,mask.var];
   d1=d1[order(d1[,id]),]; d2=d2[order(d2[,id]),];
   
-  for (var in setdiff(names(d1),id)){    
+  for (var in setdiff(mask.var,id)){    
     pb_type=FALSE
     types=c(class(d1[,var]),class(d2[,var]))
     if (types[1]!=types[2]){
       pb_type=TRUE
-      msg.type=paste(" ",var," is ",types[1]," in ",name_d1," but ",types[2]," in ",name_d2,"\n",sep="")
+      msg.type=paste(" ",var," is ",types[1]," in ",name_d1," while ",types[2]," in ",name_d2,"\n",sep="")
     }
     
     pb_factor=FALSE
@@ -65,7 +84,7 @@ function(d1,d2,id,file.export=NULL){
       if (pb_factor){cat(msg.factor)}
       if (nrow(tmp)>0){
         print(tmp,row.names=rep("",nrow(tmp)),justify="left")
-        tmp_add=data.frame(id=tmp$id,Covariate=rep(var,nrow(tmp)),v1=tmp[,2],v2=tmp[,3])
+        tmp_add=data.frame(id=tmp[,id],Covariate=rep(var,nrow(tmp)),v1=tmp[,2],v2=tmp[,3])
         names(tmp_add)=c(id,"Covariate",name_d1,name_d2)
         out_table=rbind(out_table,tmp_add)
       }

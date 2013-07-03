@@ -1,11 +1,32 @@
-plot_mm <-
-function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times=TRUE,
+#' Spaghetti plot and plot of the mean at each time
+#'
+#' Spaghetti plot and plot of the mean at each time
+#'
+#' @param formula \code{obs~time+(group|id)} or \code{obs~time+(1|id)}
+#' @param data data frame in which we can find \code{obs}, \code{time}, \code{group} and \code{id}
+#' @param col.spag vector of length \code{nrow(data)} with colors (one for each individual)
+#' @param col.mean vector of length \code{length(levels(group))} with colors (one for each group)
+#' @param type \code{"spaghettis"}, \code{"mean"} or \code{"both"}
+#' @param tick.times boolean, \code{TRUE} to display ticks at each observation time on the x-axis
+#' @param xlab character sring, label of the time axis
+#' @param ylab character string, label of the y axis
+#' @param main character string, main title
+#' @param lwd.spag numeric, width of the spaghetti lines, 1 by default
+#' @param lwd.mean numeric, width of the mean lines, 4 by default
+#' @param ... Other arguments to be passed in \code{\link{plot}}
+#' @return None
+#' @author Hugo Varet on Anais Charles-Nelson's idea
+#' @examples
+#' N=10
+#' time=rep(1:4,N)
+#' obs=1.1*time + rep(0:1,each=2*N) + rnorm(4*N)
+#' my.data=data.frame(id=rep(1:N,each=4),time,obs,group=rep(1:2,each=N*2))
+#' par(xaxs="i",yaxs="i")
+#' plot_mm(obs~time+(group|id),my.data,col.spag=my.data$group,
+#'         col.mean=c("blue","red"),type="both",main="Test plot_mm")
+
+plot_mm=function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times=TRUE,
                  xlab=NULL,ylab=NULL,main="",lwd.spag=1,lwd.mean=4,...){
-  # formula: obs~time+(group|id) or obs~time+(1|id)
-  # data: data frame in which we can find obs, time, group and id
-  # col.spag: vector of length nrow(data) with colors (one for each individual)
-  # col.mean: vector of length length(levels(group)) with colors (one for each group)
-  # type: "spaghettis", "mean" or "both"
   formumla=deparse(formula)
   name_data=deparse(data)
   formula <- paste(formula, collapse=" ")
@@ -48,3 +69,10 @@ function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times=TRUE,
     }               
   }
 }
+
+#N=20
+#time=rep(1:4,N)
+#obs=1.1*time + rep(0:1,each=2*N) + rnorm(4*N)
+#my.data=data.frame(id=rep(1:N,each=4),time,obs,group=rep(1:2,each=N*2))
+#par(xaxs="i",yaxs="i")
+#plot_mm(obs~time+(group|id),my.data,col.spag=my.data$group,col.mean=c("blue","red"),type="both",main="Test plot_mm")

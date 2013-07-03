@@ -1,12 +1,42 @@
-plot_km <-
-function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,nrisk.labels=NULL,
-                 xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=par("cex"),lwd=2,col=NULL,...){
+#' Kaplan-Meier plot with number of subjects at risk below
+#'
+#' Kaplan-Meier plot with number of subjects at risk below
+#'
+#' @param formula same formula than in \code{\link{survfit}} (\code{Surv(time,cens)~group} or \code{Surv(time,cens)~1}), where \code{cens} must equal to 0 (censorship) or 1 (failure)
+#' @param data data frame with \code{time}, \code{cens} and \code{group}
+#' @param test boolean, \code{TRUE} to compute and display the p-value of the log-rank test
+#' @param xy.pvalue numeric vector of length 2, coordinates where to display the p-value of the log-rank test
+#' @param conf.int boolean, \code{TRUE} to display the confidence interval of the curve(s)
+#' @param times.print numeric vector, times at which to display the numbers of subjects at risk
+#' @param legend character string (\code{"bottomright"} for example) or numeric vector (\code{c(x,y)}), where to place the legend of the curve(s)
+#' @param nrisk.labels character vector to modify the levels of \code{group} in the table below the curve(s)
+#' @param xlab character string, label of the time axis
+#' @param ylab character string, label of the y axis
+#' @param ylim numeric vector of length 2, minimum and maximum of the y-axis
+#' @param left integer, size of left margin
+#' @param bottom integer, number of lines in addition of the table below the graph
+#' @param cex.mtext numeric, size of the numbers of subjects at risk
+#' @param lwd width of the Kaplan-Meier curve(s)
+#' @param lty type of the Kaplan-Meier curve(s)
+#' @param col color(s) of the Kaplan-Meier curve(s)
+#' @param \dots other arguments to be passed in \code{\link{plot.survfit}}
+#' @return None
+#' @author Hugo Varet
+#' @examples
+#' cgd$time=cgd$tstop-cgd$tstart
+#' plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"))
+
+# last update: july 01, 2013
+
+plot_km=function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,nrisk.labels=NULL,legend=NULL,
+                 xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=par("cex"),lwd=2,lty=1,col=NULL,...){
   # formula: Surv(temps,cens)~groupe, ces variables étant dans data
   # test: TRUE to perform a log-rank test (set to FALSE if only one level in groupe)
   # xy.pvalue: vector of length 2 (coordinates where to place the p-value of the test)
   # conf.int: TRUE to add the confidence interval(s) of the curves
   # times.print: temps auxquels les n at risk s'affichent
   # nrisk.labels: character vector to customize the levels of groupe
+  # legend: where to display the legend ("topright","bottomright" or "bottomleft" or c(x,y))
   # left: nb de lignes dans la marge de gauche (controle donc la largeur)
   # bottom: nb de lignes en plus de celles du tableau dans la marge du bas (utile pour juxtaposer pls graph)
   # attention: dans formula, il ne faut que des noms de variables, i.e. pas de cut(x,...)
@@ -29,7 +59,7 @@ function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,n
   if (varnames[3]=="1"){
     groupe=factor(rep("# at risk",nrow(data)))
     name_at_risk=""
-    test=F
+    test=FALSE; legend=NULL;
   } else{
     groupe=factor(data[,varnames[3]])
     if (length(levels(factor(data[,varnames[3]])))==1){
@@ -50,7 +80,12 @@ function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,n
   
 #  mar=c(bottom, left, top, right)
   par(mar=c(1+nlevels(groupe)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
-  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,col=col,ylim=ylim,...)
+  plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,lty=lty,col=col,ylim=ylim,...)
+  
+  # affichage de la légende
+  if (!is.null(legend)){
+    legend(legend[1],if(length(legend)==2){legend[2]}else{NULL},legend=levels(d$groupe),col=col,lwd=lwd,lty=lty)
+  }
   
   # calcul des n at risk
   if (is.null(times.print)){
@@ -90,3 +125,23 @@ function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,n
     }
   }  
 }
+
+
+#library(survival)
+#cgd$time=cgd$tstop-cgd$tstart
+#par(mfrow=c(2,2))
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xaxt="n",xlim=c(0,200),main="xlim=c(0,200)")
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xlim=c(0,200),main="xlim=c(0,200)")
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xaxt="n",xlim=c(0,500),main="xlim=c(0,500)")
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xlim=c(0,500),main="xlim=c(0,500)")     
+#
+#cgd$time=cgd$tstop-cgd$tstart
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xaxt="n",xlim=c(0,510),main="xlim=c(0,510)")
+#axis(1,at=c(0,100,200,300,400,500))
+#
+#par(mfrow=c(1,2))
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xlim=c(200,500),main="xlim=c(200,500)")     
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xlim=c(-200,500),main="xlim=c(-200,500)")     
+#         
+#plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"),xlim=c(200,500),main="xlim=c(200,500)")     
+

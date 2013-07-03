@@ -1,5 +1,17 @@
-multi.table <-
-function(data,vars){
+#' Multi cross table
+#'
+#' Builds a big cross table between several covariates
+#'
+#' @param data the data frame in which we can find \code{vars}
+#' @param vars vector of character string of covariates
+#' @return A matrix containing all the contingency tables between the covariates
+#' @author Hugo Varet
+#' @seealso \code{\link{plot_multi.table}}
+#' @examples
+#' multi.table(cgd,c("treat","sex","inherit"))
+
+# fonction qui croise toutes les variables qualitatives
+multi.table=function(data,vars){
   if (any(!I(vars %in% names(data)))){
     stop(paste("Variable(s) ",paste(vars[!I(vars %in% names(data))],collapse=", ")," not in ",deparse(substitute(data)),"\n",sep=""))
   }
@@ -45,3 +57,7 @@ function(data,vars){
 
   return(noquote(res3))
 }
+
+#N=100
+#my.data=data.frame(a=factor(sample(1:3,N,TRUE)),b=factor(sample(1:5,N,TRUE)),c=factor(sample(1:4,N,TRUE)))
+#multi.table(my.data,c("a","b","c"))

@@ -1,30 +1,53 @@
 \name{plot_mm}
 \alias{plot_mm}
 \title{Spaghetti plot and plot of the mean at each time}
-\description{Spaghetti plot and plot of the mean at each time}
 \usage{
-plot_mm(formula, data, col.spag = 1, col.mean = 1,
-        type = "spaghettis", tick.times = TRUE, xlab = NULL, 
-        ylab = NULL, main = "", lwd.spag = 1, lwd.mean = 4, ...)
+  plot_mm(formula, data, col.spag = 1, col.mean = 1,
+    type = "spaghettis", tick.times = TRUE, xlab = NULL,
+    ylab = NULL, main = "", lwd.spag = 1, lwd.mean = 4,
+    ...)
 }
-
 \arguments{
-  \item{formula}{\code{obs~time+(group|id)} or \code{obs~time+(1|id)}}
-  \item{data}{data frame in which we can find \code{obs}, \code{time}, \code{group} and \code{id}}
-  \item{col.spag}{vector of length \code{nrow(data)} with colors (one for each individual)}
-  \item{col.mean}{vector of length \code{length(levels(group))} with colors (one for each group)}
-  \item{type}{\code{"spaghettis"}, \code{"mean"} or \code{"both"}}
-  \item{tick.times}{boolean, \code{TRUE} to display ticks at each observation time on the x-axis}
-  \item{xlab}{character sring, label of the time axis}
-  \item{ylab}{character string, label of the y axis}
-  \item{main}{character string, main title}
-  \item{lwd.spag}{numeric, width of the spaghetti lines, 1 by default}
-  \item{lwd.mean}{numeric, width of the mean lines, 4 by default}
-  \item{...}{Other arguments to be passed in \code{\link{plot}}}
-}
-\value{None}
-\author{Hugo Varet on Anais Charles-Nelson's idea}
+  \item{formula}{\code{obs~time+(group|id)} or
+  \code{obs~time+(1|id)}}
 
+  \item{data}{data frame in which we can find \code{obs},
+  \code{time}, \code{group} and \code{id}}
+
+  \item{col.spag}{vector of length \code{nrow(data)} with
+  colors (one for each individual)}
+
+  \item{col.mean}{vector of length
+  \code{length(levels(group))} with colors (one for each
+  group)}
+
+  \item{type}{\code{"spaghettis"}, \code{"mean"} or
+  \code{"both"}}
+
+  \item{tick.times}{boolean, \code{TRUE} to display ticks
+  at each observation time on the x-axis}
+
+  \item{xlab}{character sring, label of the time axis}
+
+  \item{ylab}{character string, label of the y axis}
+
+  \item{main}{character string, main title}
+
+  \item{lwd.spag}{numeric, width of the spaghetti lines, 1
+  by default}
+
+  \item{lwd.mean}{numeric, width of the mean lines, 4 by
+  default}
+
+  \item{...}{Other arguments to be passed in
+  \code{\link{plot}}}
+}
+\value{
+  None
+}
+\description{
+  Spaghetti plot and plot of the mean at each time
+}
 \examples{
 N=10
 time=rep(1:4,N)
@@ -34,3 +57,7 @@ par(xaxs="i",yaxs="i")
 plot_mm(obs~time+(group|id),my.data,col.spag=my.data$group,
         col.mean=c("blue","red"),type="both",main="Test plot_mm")
 }
+\author{
+  Hugo Varet on Anais Charles-Nelson's idea
+}
+

@@ -1,23 +1,29 @@
 \name{compare}
 \alias{compare}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Comparing two databases assumed to be identical}
-\description{Compares two data frames assumed to be identical, prints the differences in the console and also returns the results in a data frame}
 \usage{
-compare(d1, d2, id, file.export = NULL)
+  compare(d1, d2, id, file.export = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{d1}{first data frame}
+
   \item{d2}{second data frame}
-  \item{id}{character string, primary key of the two data bases}
-  \item{file.export}{character string, name of the XLS file exported}
+
+  \item{id}{character string, primary key of the two data
+  bases}
+
+  \item{file.export}{character string, name of the XLS file
+  exported}
 }
-
-\value{A data frame containing the differences between the two data bases}
-
-\author{Hugo Varet}
-
+\value{
+  A data frame containing the differences between the two
+  data bases
+}
+\description{
+  Compares two data frames assumed to be identical, prints
+  the differences in the console and also returns the
+  results in a data frame
+}
 \examples{
 N=100
 data1=data.frame(id=1:N,a=rnorm(N),
@@ -34,3 +40,7 @@ data2$d=as.character(data2$d)
 data2$e=rnorm(N)
 compare(data1,data2,"id")
 }
+\author{
+  Hugo Varet
+}
+

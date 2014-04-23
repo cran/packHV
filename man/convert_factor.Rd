@@ -2,7 +2,7 @@
 \alias{convert_factor}
 \title{Convert variables of a data frame in factors}
 \usage{
-  convert_factor(data, vars)
+convert_factor(data, vars)
 }
 \arguments{
   \item{data}{the data frame in which we can find
@@ -11,10 +11,10 @@
   \item{vars}{vector of character string of covariates}
 }
 \value{
-  The modified data frame
+The modified data frame
 }
 \description{
-  Converts variables of a data frame in factors
+Converts variables of a data frame in factors
 }
 \examples{
 cgd$steroids
@@ -22,6 +22,6 @@ cgd$status
 cgd=convert_factor(cgd,c("steroids","status"))
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

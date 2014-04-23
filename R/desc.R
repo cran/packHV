@@ -23,7 +23,7 @@
 #' cgd$status=factor(cgd$status)
 #' desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
 
-# last updated: may 30, 2013
+# last updated: august 12, 2013
 
 desc=function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL,type.quanti="mean",
                   test.quanti="param",test=TRUE,noquote=TRUE,justify=TRUE,digits=2,file.export=NULL,
@@ -235,8 +235,8 @@ desc=function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL
   
   ################################# export #####################################  
   if (!is.null(file.export)){
-    out.df=as.data.frame(out)
-    WriteXLS("out.df",file.export,"Descriptive statitics",Encoding="latin1",AdjWidth=TRUE,col.names=FALSE)
+    out.df=as.data.frame(out,row.names=1:nrow(out))
+    WriteXLS("out.df",file.export,"Descriptive statitics",col.names=FALSE,AdjWidth=TRUE)
     cat("Export created: ",file.export,"\n",sep="")
     if (noquote){out=noquote(out)}
     return(invisible(out))
@@ -245,9 +245,3 @@ desc=function(data,vars,group=NULL,whole=TRUE,vars.labels=vars,group.labels=NULL
     return(out)
   }
 }
-
-## cgd: data available in the survival package
-#cgd$steroids=factor(cgd$steroids)
-#cgd$status=factor(cgd$status)
-#desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
- 

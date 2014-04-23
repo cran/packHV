@@ -2,7 +2,7 @@
 \alias{IC_RR_coxph}
 \title{RR and their confidence intervals for Cox models}
 \usage{
-  IC_RR_coxph(model, alpha = 0.05, sided = 2)
+IC_RR_coxph(model, alpha = 0.05, sided = 2)
 }
 \arguments{
   \item{model}{a \code{coxph} object}
@@ -12,18 +12,18 @@
   \item{sided}{1 or 2 for one or two-sided}
 }
 \value{
-  A matrix with the estimaed coefficients of the Cox model,
-  their s.e., z-values, p-values, RR and CI of the RR
+A matrix with the estimaed coefficients of the Cox model,
+their s.e., z-values, p-values, RR and CI of the RR
 }
 \description{
-  Computess risk ratios and their confidence intervals for
-  Cox models
+Computess risk ratios and their confidence intervals for
+Cox models
 }
 \examples{
 cgd$time=cgd$tstop-cgd$tstart
 IC_RR_coxph(coxph(Surv(time,status)~sex+age,data=cgd),alpha=0.05,sided=1)
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

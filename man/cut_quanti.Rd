@@ -2,7 +2,7 @@
 \alias{cut_quanti}
 \title{Cut a quantitative variable in \eqn{n} equal parts}
 \usage{
-  cut_quanti(x, n, ...)
+cut_quanti(x, n, ...)
 }
 \arguments{
   \item{x}{a numeric vector}
@@ -14,15 +14,15 @@
   \code{\link{cut}}}
 }
 \value{
-  A factor vector
+A factor vector
 }
 \description{
-  Cuts a quantitative variable in \eqn{n} equal parts
+Cuts a quantitative variable in \eqn{n} equal parts
 }
 \examples{
 cut_quanti(cgd$height, 3)
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

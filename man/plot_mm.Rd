@@ -2,10 +2,9 @@
 \alias{plot_mm}
 \title{Spaghetti plot and plot of the mean at each time}
 \usage{
-  plot_mm(formula, data, col.spag = 1, col.mean = 1,
-    type = "spaghettis", tick.times = TRUE, xlab = NULL,
-    ylab = NULL, main = "", lwd.spag = 1, lwd.mean = 4,
-    ...)
+plot_mm(formula, data, col.spag = 1, col.mean = 1, type = "spaghettis",
+  tick.times = TRUE, xlab = NULL, ylab = NULL, main = "",
+  lwd.spag = 1, lwd.mean = 4, ...)
 }
 \arguments{
   \item{formula}{\code{obs~time+(group|id)} or
@@ -43,10 +42,10 @@
   \code{\link{plot}}}
 }
 \value{
-  None
+None
 }
 \description{
-  Spaghetti plot and plot of the mean at each time
+Spaghetti plot and plot of the mean at each time
 }
 \examples{
 N=10
@@ -58,6 +57,6 @@ plot_mm(obs~time+(group|id),my.data,col.spag=my.data$group,
         col.mean=c("blue","red"),type="both",main="Test plot_mm")
 }
 \author{
-  Hugo Varet on Anais Charles-Nelson's idea
+Hugo Varet on Anais Charles-Nelson's idea
 }
 

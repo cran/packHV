@@ -2,7 +2,7 @@
 \alias{plot_multi.table}
 \title{Plot a multi cross table}
 \usage{
-  plot_multi.table(data, vars, main = "")
+plot_multi.table(data, vars, main = "")
 }
 \arguments{
   \item{data}{the data frame in which we can find
@@ -13,18 +13,18 @@
   \item{main}{main title of the plot}
 }
 \value{
-  None
+None
 }
 \description{
-  Plots a multi cross table on a graph
+Plots a multi cross table on a graph
 }
 \examples{
 plot_multi.table(cgd,c("treat","sex","inherit"))
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 \seealso{
-  \code{\link{multi.table}}
+\code{\link{multi.table}}
 }
 

@@ -2,12 +2,10 @@
 \alias{plot_km}
 \title{Kaplan-Meier plot with number of subjects at risk below}
 \usage{
-  plot_km(formula, data, test = TRUE, xy.pvalue = NULL,
-    conf.int = FALSE, times.print = NULL,
-    nrisk.labels = NULL, legend = NULL, xlab = NULL,
-    ylab = NULL, ylim = c(0, 1.02), left = 4.5, bottom = 5,
-    cex.mtext = par("cex"), lwd = 2, lty = 1, col = NULL,
-    ...)
+plot_km(formula, data, test = TRUE, xy.pvalue = NULL, conf.int = FALSE,
+  times.print = NULL, nrisk.labels = NULL, legend = NULL, xlab = NULL,
+  ylab = NULL, ylim = c(0, 1.02), left = 4.5, bottom = 5,
+  cex.mtext = par("cex"), lwd = 2, lty = 1, col = NULL, ...)
 }
 \arguments{
   \item{formula}{same formula than in \code{\link{survfit}}
@@ -62,16 +60,16 @@
   \code{\link{plot.survfit}}}
 }
 \value{
-  None
+None
 }
 \description{
-  Kaplan-Meier plot with number of subjects at risk below
+Kaplan-Meier plot with number of subjects at risk below
 }
 \examples{
 cgd$time=cgd$tstop-cgd$tstart
 plot_km(Surv(time,status)~sex,data=cgd,col=c("blue","red"))
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

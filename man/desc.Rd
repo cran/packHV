@@ -2,11 +2,10 @@
 \alias{desc}
 \title{Making descriptive statistics}
 \usage{
-  desc(data, vars, group = NULL, whole = TRUE,
-    vars.labels = vars, group.labels = NULL,
-    type.quanti = "mean", test.quanti = "param",
-    test = TRUE, noquote = TRUE, justify = TRUE,
-    digits = 2, file.export = NULL, language = "english")
+desc(data, vars, group = NULL, whole = TRUE, vars.labels = vars,
+  group.labels = NULL, type.quanti = "mean", test.quanti = "param",
+  test = TRUE, noquote = TRUE, justify = TRUE, digits = 2,
+  file.export = NULL, language = "english")
 }
 \arguments{
   \item{data}{data frame to describe in which we can find
@@ -62,11 +61,11 @@
   \code{"english"}}
 }
 \value{
-  A matrix of the descriptive statistics
+A matrix of the descriptive statistics
 }
 \description{
-  Makes descriptive statistics of a data frame according to
-  a group covariate or not, can export the results
+Makes descriptive statistics of a data frame according to a
+group covariate or not, can export the results
 }
 \examples{
 cgd$steroids=factor(cgd$steroids)
@@ -74,6 +73,6 @@ cgd$status=factor(cgd$status)
 desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),group="treat")
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

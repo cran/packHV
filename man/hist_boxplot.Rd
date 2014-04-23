@@ -2,8 +2,8 @@
 \alias{hist_boxplot}
 \title{Plot a histogram with a boxplot below}
 \usage{
-  hist_boxplot(x, freq = TRUE, density = FALSE,
-    main = NULL, xlab = NULL, ...)
+hist_boxplot(x, freq = TRUE, density = FALSE, main = NULL, xlab = NULL,
+  ...)
 }
 \arguments{
   \item{x}{a numeric vector}
@@ -23,10 +23,10 @@
   \code{hist()}}
 }
 \value{
-  None
+None
 }
 \description{
-  Plots a histogram with a boxplot below
+Plots a histogram with a boxplot below
 }
 \examples{
 par(mfrow=c(1,2))
@@ -34,6 +34,6 @@ hist_boxplot(rnorm(100),col="lightblue",freq=TRUE)
 hist_boxplot(rnorm(100),col="lightblue",freq=FALSE,density=TRUE)
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

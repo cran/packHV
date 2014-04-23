@@ -2,7 +2,7 @@
 \alias{plot_reg}
 \title{Plot points with the corresponding linear regression line}
 \usage{
-  plot_reg(x, y, pch = 19, xlab = NULL, ylab = NULL, ...)
+plot_reg(x, y, pch = 19, xlab = NULL, ylab = NULL, ...)
 }
 \arguments{
   \item{x}{numeric vector}
@@ -21,16 +21,15 @@
   \code{\link{plot}}}
 }
 \value{
-  None
+None
 }
 \description{
-  Plots points with the corresponding linear regression
-  line
+Plots points with the corresponding linear regression line
 }
 \examples{
 plot_reg(cgd$age,cgd$height,xlab="Age (years)",ylab="Height")
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

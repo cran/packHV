@@ -2,7 +2,7 @@
 \alias{compare}
 \title{Comparing two databases assumed to be identical}
 \usage{
-  compare(d1, d2, id, file.export = NULL)
+compare(d1, d2, id, file.export = NULL)
 }
 \arguments{
   \item{d1}{first data frame}
@@ -16,13 +16,13 @@
   exported}
 }
 \value{
-  A data frame containing the differences between the two
-  data bases
+A data frame containing the differences between the two
+data bases
 }
 \description{
-  Compares two data frames assumed to be identical, prints
-  the differences in the console and also returns the
-  results in a data frame
+Compares two data frames assumed to be identical, prints
+the differences in the console and also returns the results
+in a data frame
 }
 \examples{
 N=100
@@ -41,6 +41,6 @@ data2$e=rnorm(N)
 compare(data1,data2,"id")
 }
 \author{
-  Hugo Varet
+Hugo Varet
 }
 

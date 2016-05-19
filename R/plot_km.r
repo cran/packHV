@@ -30,7 +30,7 @@
 
 plot_km=function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.print=NULL,nrisk.labels=NULL,legend=NULL,
                  xlab=NULL,ylab=NULL,ylim=c(0,1.02),left=4.5,bottom=5,cex.mtext=par("cex"),lwd=2,lty=1,col=NULL,...){
-  # formula: Surv(temps,cens)~groupe, ces variables étant dans data
+  # formula: Surv(temps,cens)~groupe, these variables being in data
   # test: TRUE to perform a log-rank test (set to FALSE if only one level in groupe)
   # xy.pvalue: vector of length 2 (coordinates where to place the p-value of the test)
   # conf.int: TRUE to add the confidence interval(s) of the curves
@@ -82,12 +82,11 @@ plot_km=function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.prin
   par(mar=c(1+nlevels(groupe)+bottom, left, 4, 3) + 0.1,xaxs="i",yaxs="i")
   plot(survfit(Surv(temps,cens)~groupe,data=d),conf.int=conf.int,xlab=xlab,ylab=ylab,lwd=lwd,lty=lty,col=col,ylim=ylim,...)
   
-  # affichage de la légende
   if (!is.null(legend)){
     legend(legend[1],if(length(legend)==2){legend[2]}else{NULL},legend=levels(d$groupe),col=col,lwd=lwd,lty=lty)
   }
   
-  # calcul des n at risk
+  # compute the n at risk
   if (is.null(times.print)){
     times.print=axis(1,labels=FALSE,tick=FALSE)
     times.print=times.print[times.print>=0]
@@ -105,7 +104,7 @@ plot_km=function(formula,data,test=TRUE,xy.pvalue=NULL,conf.int=FALSE,times.prin
   }
   if (!is.null(nrisk.labels)){rownames(n.risk)[-1]=nrisk.labels}
     
-  # affichage des n at risk
+  # print of the n at risk
   range=range(axis(1,labels=FALSE,tick=FALSE))
   mtext(side=1,at=-0.065*(range[2]-range[1])+range[1],line=4,name_at_risk,cex=cex.mtext,adj=1)
   for (i in 2:nrow(n.risk)){

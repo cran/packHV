@@ -36,7 +36,7 @@ plot_reg=function(x,y,pch=19,xlab=NULL,ylab=NULL,...){
 
 #x1=runif(20)
 #y1=0.5+1*x1+rnorm(20,sd=0.1)
-#plot_reg(x=x1,y=y1,main="essai",xlab="axe des abscisses",ylab="axe des ordonnées")
+#plot_reg(x=x1,y=y1,main="essai",xlab="axe des abscisses",ylab="axe des ordonnees")
 #plot_reg(x=x1,y=y1,main="essai")
 #y=y1
 #x=x1

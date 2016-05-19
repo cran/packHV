@@ -12,19 +12,18 @@
 #' IC_RR_coxph(coxph(Surv(time,status)~sex+age,data=cgd),alpha=0.05,sided=1)
 
 IC_RR_coxph=function(model,alpha=0.05,sided=2){
-  # model doit etre un objet résultant de coxph
+  # model must come from the coxph() function
   tab=matrix(nrow=nrow(summary(model)$coefficients),ncol=ncol(summary(model)$coefficients)+3,
            dimnames = list(c(rownames(summary(model)$coefficients)),c(colnames(summary(model)$coefficients),"RR","IC.inf","IC.sup")))
   tab[,1:ncol(summary(model)$coefficients)]=round(summary(model)$coefficients,digits=3)
   tab[,"RR"]=round(exp(summary(model)$coefficients[,"coef"]),digits=3)
   tab[,"IC.inf"]=round(exp(summary(model)$coefficients[,"coef"]-qnorm(1-alpha/2)*summary(model)$coefficients[,"se(coef)"]),digits=3)
   tab[,"IC.sup"]=round(exp(summary(model)$coefficients[,"coef"]+qnorm(1-alpha/2)*summary(model)$coefficients[,"se(coef)"]),digits=3)
-  # attention : en cas de test unilatéral, on divise simplement la p-valeur par 2
-  # il faut faire attention au sens du coefficient
+  # warning: if one-sided test, we divide the p-value by 2
   if (sided==1){
     tab[,5]=tab[,5]/2
   }
-  # supprimer la colonne exp(coef)
+  # remove exp(coef) column
   if (nrow(tab)==1){tab=t(as.matrix(tab[,-2]))} else{tab=tab[,-2]}
   rownames(tab)=rownames(summary(model)$coefficients)
   signif=ifelse(tab[,"Pr(>|z|)"]>=0.1,"",ifelse(tab[,"Pr(>|z|)"]>=0.05,".",ifelse(tab[,"Pr(>|z|)"]>=0.01,"*",ifelse(tab[,"Pr(>|z|)"]>=0.001,"**","***"))))

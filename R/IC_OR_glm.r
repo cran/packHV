@@ -10,12 +10,12 @@
 #' IC_OR_glm(glm(inherit~sex+age,data=cgd,family="binomial"))
 
 IC_OR_glm=function(model,alpha=0.05){
-  # model doit etre un objet résultant de glm
+  # model must come from the glm() function
   tab=matrix(nrow=nrow(summary(model)$coefficients),ncol=ncol(summary(model)$coefficients)+3,
            dimnames = list(c(rownames(summary(model)$coefficients)),c(colnames(summary(model)$coefficients),"OR","IC.inf","IC.sup")))
   tab[,1:ncol(summary(model)$coefficients)]=round(summary(model)$coefficients,digits=3)
   for (i in 1:(nrow(summary(model)$coefficients))){
-    # i = indice de la covariable
+    # i = index of the covariate
     OR=round(exp(summary(model)$coefficients[i,1]),digits=3)
     ICinf=round(exp(summary(model)$coefficients[i,1]-qnorm(1-alpha/2)*summary(model)$coefficients[i,2]),digits=3)
     ICsup=round(exp(summary(model)$coefficients[i,1]+qnorm(1-alpha/2)*summary(model)$coefficients[i,2]),digits=3)

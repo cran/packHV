@@ -1,4 +1,4 @@
-94b1ac765858df946c6e75027d4c9120 *DESCRIPTION
+6e5de5ab53eff3ade89cd8ebe08726d6 *DESCRIPTION
 cb13caea54162857a1dd7f6ffa4078a7 *NAMESPACE
 d4a08255c929c52eb03a9ec2383e4f19 *R/IC_OR_glm.r
 539a0aad92f8bfdab4217d46c5a3a040 *R/IC_RR_coxph.r
@@ -12,7 +12,7 @@ d8845794a7108f122e4e12d17ac9fe99 *R/hist_boxplot.r
 1cba9fb9abaff209b2d09710d40b9b7e *R/multi.table.r
 0c5aad14f128ea372962e5755694ba39 *R/packHV-package.r
 9614281671b255907f21b4967ab35168 *R/plot_km.r
-89f695eca6f25b5007bb30b8b0ebd75c *R/plot_mm.r
+0fd6b6a4dd71ac588ce426b809aca7e4 *R/plot_mm.r
 1c0a33550f305cd86ab805ec70ab2792 *R/plot_multi.table.r
 b701b17e5e6f69ecbe2532eb05425a44 *R/plot_reg.r
 3ffb2cfb76e20a9efb5bb0a8a63b1b5b *man/IC_OR_glm.Rd

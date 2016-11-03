@@ -41,10 +41,10 @@ plot_mm=function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times
   
   id=data[,varnames[4]]; time=data[,varnames[2]]; obs=data[,varnames[1]];
   if (varnames[3]==1){group=rep(1,nrow(data))} else{group=data[,varnames[3]]}
-  data=data.frame(id,time,obs,group,col.spag=col.spag)
+  data=data.frame(id=factor(id),time,obs,group=factor(group),col.spag=col.spag,stringsAsFactors=FALSE)
   data$group=factor(data$group)
   data=data[order(data$time),]; data=data[order(data$id),];
-  
+
   if (!I(type %in% c("spaghettis","mean","both"))){
     stop("type must be equal to \"spaghettis\", \"mean\" or \"both\"")
   }
@@ -76,3 +76,11 @@ plot_mm=function(formula,data,col.spag=1,col.mean=1,type="spaghettis",tick.times
 #my.data=data.frame(id=rep(1:N,each=4),time,obs,group=rep(1:2,each=N*2))
 #par(xaxs="i",yaxs="i")
 #plot_mm(obs~time+(group|id),my.data,col.spag=my.data$group,col.mean=c("blue","red"),type="both",main="Test plot_mm")
+
+# N=10
+# time=rep(1:4,N)
+# obs=1.1*time + rep(0:1,each=2*N) + rnorm(4*N)
+# my.data=data.frame(id=rep(1:N,each=4),time,obs,group=rep(1:2,each=N*2))
+# par(xaxs="i",yaxs="i")
+# plot_mm(obs~time+(group|id),my.data,col.spag=ifelse(my.data$group==1,"blue","grey"),
+#        col.mean=c("blue","grey"),type="both",main="Test plot_mm")

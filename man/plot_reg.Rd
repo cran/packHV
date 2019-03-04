@@ -31,4 +31,3 @@ plot_reg(cgd$age,cgd$height,xlab="Age (years)",ylab="Height")
 \author{
 Hugo Varet
 }
-

@@ -52,4 +52,3 @@ desc(cgd,vars=c("center","sex","age","height","weight","steroids","status"),grou
 \author{
 Hugo Varet
 }
-

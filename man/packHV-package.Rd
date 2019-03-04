@@ -10,4 +10,3 @@ Various useful functions for statisticians: describe data, plot Kaplan-Meier cur
 \author{
 Hugo Varet
 }
-

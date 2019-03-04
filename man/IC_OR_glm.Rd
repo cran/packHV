@@ -23,4 +23,3 @@ IC_OR_glm(glm(inherit~sex+age,data=cgd,family="binomial"))
 \author{
 Hugo Varet
 }
-

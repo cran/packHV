@@ -40,4 +40,3 @@ compare(data1,data2,"id")
 \author{
 Hugo Varet
 }
-

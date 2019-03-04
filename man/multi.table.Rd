@@ -20,10 +20,9 @@ Builds a big cross table between several covariates
 \examples{
 multi.table(cgd,c("treat","sex","inherit"))
 }
-\author{
-Hugo Varet
-}
 \seealso{
 \code{\link{plot_multi.table}}
 }
-
+\author{
+Hugo Varet
+}

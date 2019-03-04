@@ -25,4 +25,3 @@ cut_quanti(cgd$height, 3)
 \author{
 Hugo Varet
 }
-

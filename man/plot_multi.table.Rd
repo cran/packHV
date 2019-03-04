@@ -22,10 +22,9 @@ Plots a multi cross table on a graph
 \examples{
 plot_multi.table(cgd,c("treat","sex","inherit"))
 }
-\author{
-Hugo Varet
-}
 \seealso{
 \code{\link{multi.table}}
 }
-
+\author{
+Hugo Varet
+}

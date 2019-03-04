@@ -24,4 +24,3 @@ my.data=convert_zero_NA(my.data,c("y","z"))
 \author{
 Hugo Varet
 }
-

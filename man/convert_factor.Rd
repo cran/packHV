@@ -25,4 +25,3 @@ cgd=convert_factor(cgd,c("steroids","status"))
 \author{
 Hugo Varet
 }
-

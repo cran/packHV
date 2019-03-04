@@ -26,4 +26,3 @@ IC_RR_coxph(coxph(Surv(time,status)~sex+age,data=cgd),alpha=0.05,sided=1)
 \author{
 Hugo Varet
 }
-
